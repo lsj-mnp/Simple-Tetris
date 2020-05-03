@@ -80,6 +80,15 @@ namespace fs
 	public:
 		const Position2& getCurrPosition() const;
 
+	public:
+		void setCurrBlockType(EBlockType eBlockType);
+		EBlockType getCurrBlockType() const;
+
+	public:
+		void setTimerInterval(int32 interval);
+		int32 getTimerInterval() const;
+		bool tickTimer() const;
+
 	private:
 		void createBlock(EBlockType eBlockType, const Color& color, uint8 alpha = 255);
 
@@ -96,6 +105,10 @@ namespace fs
 		static constexpr Size2	kBoardSize{ 10, 20 };
 		static constexpr Size2	kBoardSizePixel{ kBlockSize * kBoardSize };
 
+		static constexpr int32 kTimerIntervalMin{ 100 };
+		static constexpr int32 kBlockContainerSize{ 4 };
+
+
 	private:
 		BlockContainer			_blocks[(uint32)EBlockType::MAX][(uint32)EDirection::MAX]{};
 
@@ -107,8 +120,14 @@ namespace fs
 		uint8 _board[uint32(kBoardSize.y)][uint32(kBoardSize.x)]{};
 
 	private:
+		// 밀리초 = ms
+		// 마이크로초 = us (그리스어 뮤랑 제일 닮아서)
+		int32 _timerInterval{ 1000 };
+		mutable std::chrono::steady_clock::time_point _prevTime{};
+
+	private:
 		Position2 _currPosition{};
-		EBlockType _currBlockType{ EBlockType::T };
+		EBlockType _currBlockType{ EBlockType::I };
 		EDirection _currDirection{ EDirection::N };
 	};
 }

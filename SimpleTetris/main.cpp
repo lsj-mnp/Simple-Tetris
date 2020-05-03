@@ -38,7 +38,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 			if (GetAsyncKeyState(VK_UP) == SHORT(0x8001))
 			{
-				g_simpleTetris.move(EDirection::N);
+				//g_simpleTetris.move(EDirection::N);
+				g_simpleTetris.rotate();
 			}
 			if (GetAsyncKeyState(VK_DOWN) == SHORT(0x8001))
 			{
@@ -46,7 +47,33 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 			if (GetAsyncKeyState(VK_SPACE) == SHORT(0x8001))
 			{
-				g_simpleTetris.rotate();
+				for (int i = 0; i < SimpleTetris::kBlockSize.y; ++i)
+				{
+					g_simpleTetris.move(EDirection::S);
+				}
+				//g_simpleTetris.rotate();
+			}
+			if (GetAsyncKeyState('Q') == SHORT(0x8001))
+			{
+				auto currBlockType = g_simpleTetris.getCurrBlockType();
+				uint32 iNextBlockType{ (uint32)currBlockType + 1 };
+				if (iNextBlockType >= (uint32)EBlockType::MAX)
+				{
+					iNextBlockType = 2;
+				}
+				g_simpleTetris.setCurrBlockType((EBlockType)iNextBlockType);
+			}
+
+			if (GetAsyncKeyState('W') == SHORT(0x8001))
+			{
+				auto timerInterval{ g_simpleTetris.getTimerInterval() };
+
+				g_simpleTetris.setTimerInterval(timerInterval - 50);
+			}
+
+			if (g_simpleTetris.tickTimer() == true)
+			{
+				g_simpleTetris.move(EDirection::S);
 			}
 		}
 
@@ -59,11 +86,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				EHorzAlign::Center, EVertAlign::Center);
 
 			g_simpleTetris.useFont(0);
-			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 150, 25), L"POS: " +
+			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 110, 25), L"POS: " +
 				std::to_wstring(int32(g_simpleTetris.getCurrPosition().x)) + L", " +
 				std::to_wstring(int32(g_simpleTetris.getCurrPosition().y)), Color(0, 0, 0));
 
-			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 100, 0), L"FPS: " + g_simpleTetris.getFpsWstring(), fpsColor);
+			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 110, 0), L"FPS: " + g_simpleTetris.getFpsWstring(), fpsColor);
 		}
 		g_simpleTetris.endRendering();
 	}

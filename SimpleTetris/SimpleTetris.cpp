@@ -15,68 +15,228 @@ void fs::SimpleTetris::create(const std::wstring& title, HINSTANCE hInstance, WN
 {
 	createInternal(title, hInstance, windowProc);
 
-	createBlock(EBlockType::Used, Color(100, 100, 100));
-	createBlock(EBlockType::I, Color(0, 0, 255));
-	createBlock(EBlockType::T, Color(255, 0, 255));
+	createBlock(EBlockType::Used,	Color(100, 100, 100));
+	createBlock(EBlockType::I,		Color(255,  60,	 60));
+	createBlock(EBlockType::T,		Color(160,  80, 200));
+	createBlock(EBlockType::O,		Color(255, 255,   0));
+	createBlock(EBlockType::L,		Color(255, 200,   0));
+	createBlock(EBlockType::InvL,	Color(  0, 180, 255));
+	createBlock(EBlockType::Z,		Color( 40, 255,	 40));
+	createBlock(EBlockType::S,		Color(255, 127,	255));
 
 	// I형 블록
 	{
-		_blocks[(uint32)EBlockType::I][(uint32)EDirection::N].set(
+		_blocks[(int)EBlockType::I][(int)EDirection::N].set(
 			0, 1, 0, 0,
 			0, 1, 0, 0,
 			0, 1, 0, 0,
 			0, 1, 0, 0
 		);
 
-		_blocks[(uint32)EBlockType::I][(uint32)EDirection::W].set(
+		_blocks[(int)EBlockType::I][(int)EDirection::W].set(
 			0, 0, 0, 0,
 			0, 0, 0, 0,
 			1, 1, 1, 1,
 			0, 0, 0, 0
 		);
 
-		_blocks[(uint32)EBlockType::I][(uint32)EDirection::S].set(
+		_blocks[(int)EBlockType::I][(int)EDirection::S].set(
 			0, 0, 1, 0,
 			0, 0, 1, 0,
 			0, 0, 1, 0,
 			0, 0, 1, 0
 		);
 
-		_blocks[(uint32)EBlockType::I][(uint32)EDirection::E].set(
+		_blocks[(int)EBlockType::I][(int)EDirection::E].set(
 			0, 0, 0, 0,
 			1, 1, 1, 1,
 			0, 0, 0, 0,
 			0, 0, 0, 0
 		);
 	}
-	
-	// T형 블록
+
+	// T자형 블록
 	{
-		_blocks[(uint32)EBlockType::T][(uint32)EDirection::N].set(
+		_blocks[(int)EBlockType::T][(int)EDirection::N].set(
 			0, 1, 0, 0,
 			1, 1, 1, 0,
 			0, 0, 0, 0,
 			0, 0, 0, 0
 		);
 
-		_blocks[(uint32)EBlockType::T][(uint32)EDirection::W].set(
+		_blocks[(int)EBlockType::T][(int)EDirection::W].set(
 			0, 1, 0, 0,
 			1, 1, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 0, 0
 		);
 
-		_blocks[(uint32)EBlockType::T][(uint32)EDirection::S].set(
+		_blocks[(int)EBlockType::T][(int)EDirection::S].set(
 			0, 0, 0, 0,
 			1, 1, 1, 0,
 			0, 1, 0, 0,
 			0, 0, 0, 0
 		);
 
-		_blocks[(uint32)EBlockType::T][(uint32)EDirection::E].set(
+		_blocks[(int)EBlockType::T][(int)EDirection::E].set(
 			0, 1, 0, 0,
 			0, 1, 1, 0,
 			0, 1, 0, 0,
+			0, 0, 0, 0
+		);
+	}
+
+	// O자형 블록
+	{
+		_blocks[(int)EBlockType::O][(int)EDirection::N].set(
+			1, 1, 0, 0,
+			1, 1, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::O][(int)EDirection::W].set(
+			1, 1, 0, 0,
+			1, 1, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::O][(int)EDirection::S].set(
+			1, 1, 0, 0,
+			1, 1, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::O][(int)EDirection::E].set(
+			1, 1, 0, 0,
+			1, 1, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0
+		);
+	}
+
+	// L자형 블록
+	{
+		_blocks[(int)EBlockType::L][(int)EDirection::N].set(
+			1, 0, 0, 0,
+			1, 0, 0, 0,
+			1, 1, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::L][(int)EDirection::W].set(
+			0, 0, 0, 0,
+			0, 0, 1, 0,
+			1, 1, 1, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::L][(int)EDirection::S].set(
+			0, 1, 1, 0,
+			0, 0, 1, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::L][(int)EDirection::E].set(
+			1, 1, 1, 0,
+			1, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0
+		);
+	}
+
+	// InvL자형 블록
+	{
+		_blocks[(int)EBlockType::InvL][(int)EDirection::N].set(
+			0, 0, 1, 0,
+			0, 0, 1, 0,
+			0, 1, 1, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::InvL][(int)EDirection::W].set(
+			1, 1, 1, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::InvL][(int)EDirection::S].set(
+			1, 1, 0, 0,
+			1, 0, 0, 0,
+			1, 0, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::InvL][(int)EDirection::E].set(
+			0, 0, 0, 0,
+			1, 0, 0, 0,
+			1, 1, 1, 0,
+			0, 0, 0, 0
+		);
+	}
+
+	// Z자형 블록
+	{
+		_blocks[(int)EBlockType::Z][(int)EDirection::N].set(
+			0, 1, 0, 0,
+			1, 1, 0, 0,
+			1, 0, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::Z][(int)EDirection::W].set(
+			0, 0, 0, 0,
+			1, 1, 0, 0,
+			0, 1, 1, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::Z][(int)EDirection::S].set(
+			0, 0, 1, 0,
+			0, 1, 1, 0,
+			0, 1, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::Z][(int)EDirection::E].set(
+			1, 1, 0, 0,
+			0, 1, 1, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0
+		);
+	}
+
+	// S자형 블록
+	{
+		_blocks[(int)EBlockType::S][(int)EDirection::N].set(
+			0, 1, 0, 0,
+			0, 1, 1, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::S][(int)EDirection::W].set(
+			0, 1, 1, 0,
+			1, 1, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::S][(int)EDirection::S].set(
+			1, 0, 0, 0,
+			1, 1, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 0, 0
+		);
+
+		_blocks[(int)EBlockType::S][(int)EDirection::E].set(
+			0, 0, 0, 0,
+			0, 1, 1, 0,
+			1, 1, 0, 0,
 			0, 0, 0, 0
 		);
 	}
@@ -132,6 +292,15 @@ void fs::SimpleTetris::move(EDirection eDirection)
 		if (canDrawBlock(_currBlockType, _currPosition + Position2(0, 1), _currDirection) == true)
 		{
 			_currPosition.y += 1;
+		}
+		else
+		{
+			drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
+
+			_currDirection = EDirection::N;
+			_currPosition.x = (kBoardSize.x * 0.5) - (kBlockContainerSize * 0.5);
+			_currPosition.y = -(kBlockContainerSize * 0.5);
+			_currBlockType = 
 		}
 		break;
 	case fs::EDirection::E:
@@ -223,6 +392,56 @@ const fs::Position2& fs::SimpleTetris::getCurrPosition() const
 	return _currPosition;
 }
 
+void fs::SimpleTetris::setCurrBlockType(EBlockType eBlockType)
+{
+	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
+
+	if (canDrawBlock(eBlockType, _currPosition, _currDirection) == true)
+	{
+		_currBlockType = eBlockType;
+	}
+	else
+	{
+		drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
+	}
+}
+
+fs::EBlockType fs::SimpleTetris::getCurrBlockType() const
+{
+	return _currBlockType;
+}
+
+void fs::SimpleTetris::setTimerInterval(int32 interval)
+{
+	if (interval <= kTimerIntervalMin)
+	{
+		interval = kTimerIntervalMin;
+	}
+
+	_timerInterval = interval;
+}
+
+fs::int32 fs::SimpleTetris::getTimerInterval() const
+{
+	return _timerInterval;
+}
+
+bool fs::SimpleTetris::tickTimer() const
+{
+	using namespace std::chrono;
+
+	auto elapsed{ duration_cast<milliseconds>(steady_clock::now() - _prevTime) };
+
+	if (elapsed.count() >= _timerInterval)
+	{
+		_prevTime = steady_clock::now();
+
+		return true;
+	}
+
+	return false;
+}
+
 void fs::SimpleTetris::createBlock(EBlockType eBlockType, const Color& color, uint8 alpha)
 {
 	_iiBlocks[(uint32)eBlockType] = createBlankImage(kBlockSize);
@@ -260,8 +479,8 @@ void fs::SimpleTetris::drawBlockToBoard(EBlockType eBlockType, const Position2& 
 			const int32 finalY{ y + y_ };
 			const uint8 blockValue{ block.data[y_][x_] };
 			if (blockValue == 0) continue;
-			if (finalY < 0 || finalY >= (uint32)kBoardSize.y) continue;
-			if (finalX < 0 || finalX >= (uint32)kBoardSize.x) continue;
+			if (finalY < 0 || finalY >= (int32)kBoardSize.y) continue;
+			if (finalX < 0 || finalX >= (int32)kBoardSize.x) continue;
 			_board[finalY][finalX] = blockType;
 		}
 	}
@@ -280,8 +499,8 @@ bool fs::SimpleTetris::canDrawBlock(EBlockType eBlockType, const Position2& posi
 			const int32 finalY{ y + y_ };
 			const uint8 blockValue{ block.data[y_][x_] };
 			if (blockValue == 0) continue;
-			if (finalY >= (uint32)kBoardSize.y) return false;
-			if (finalX < 0 || finalX >= (uint32)kBoardSize.x) return false;
+			if (finalY >= (int32)kBoardSize.y) return false;
+			if (finalX < 0 || finalX >= (int32)kBoardSize.x) return false;
 			
 			if (_board[finalY][finalX] != 0)
 			{
