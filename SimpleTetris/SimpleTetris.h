@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "GraphicalWindow.h"
+//#include <queue>
+#include <deque>
 
 namespace fs
 {
@@ -71,7 +73,7 @@ namespace fs
 		void drawBoard(const Position2& position, const Color& borderColor, const Color& boardColor);
 
 	public:
-		void move(EDirection eDirection);
+		bool move(EDirection eDirection);
 		void rotate();
 
 	private:
@@ -84,10 +86,25 @@ namespace fs
 		void setCurrBlockType(EBlockType eBlockType);
 		EBlockType getCurrBlockType() const;
 
+	private:
+		EBlockType getNextBlockType() const;
+
+	public:
+		void updateNextblockQueue();
+
 	public:
 		void setTimerInterval(int32 interval);
 		int32 getTimerInterval() const;
 		bool tickTimer() const;
+
+	public:
+		uint32 getScore() const;
+
+	public:
+		bool isGameOver() const;
+
+	private:
+		void checkBingo();
 
 	private:
 		void createBlock(EBlockType eBlockType, const Color& color, uint8 alpha = 255);
@@ -95,18 +112,21 @@ namespace fs
 	private:
 		void drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha = 255);
 		void drawBlockToBoard(EBlockType eBlockType, const Position2& position, EDirection eDirection, bool bErase = false);
+		void drawBlockToScreen(EBlockType eBlockType, const Position2& position, EDirection eDirection);
 		
 	private:
 		bool canDrawBlock(EBlockType eBlockType, const Position2& position, EDirection eDirection) const;
 
 	public:
-		static constexpr Size2	kBlockSize{ 24, 24 };
+		static constexpr Size2	kBlockSize{ 30, 30 };
 		static constexpr float	kBlockBorder{ 2 };
 		static constexpr Size2	kBoardSize{ 10, 20 };
 		static constexpr Size2	kBoardSizePixel{ kBlockSize * kBoardSize };
 
 		static constexpr int32 kTimerIntervalMin{ 100 };
 		static constexpr int32 kBlockContainerSize{ 4 };
+		static constexpr int32 kNextBlockQueueMinSize{ 5 };
+		static constexpr int32 kNextBlockQueueMaxSize{ 20 };
 
 
 	private:
@@ -129,5 +149,14 @@ namespace fs
 		Position2 _currPosition{};
 		EBlockType _currBlockType{ EBlockType::I };
 		EDirection _currDirection{ EDirection::N };
+
+	private:
+		std::deque<EBlockType> _nextBlockQueue{};
+
+	private:
+		uint32 _score{};
+
+	private:
+		bool _isGameOver{ false };
 	};
 }
