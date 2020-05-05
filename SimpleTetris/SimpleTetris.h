@@ -42,12 +42,12 @@ namespace fs
 		None,
 		Used, // Gray
 		I, // Blue
-		T, //
-		O,
-		L,
-		InvL,
-		Z,
-		S,
+		T, // Purple
+		O, // Yellow
+		L, // Orange
+		InvL, // Skyblue
+		Z, // green
+		S, // Pink
 		MAX
 	};
 
@@ -71,6 +71,7 @@ namespace fs
 
 	public:
 		void drawBoard(const Position2& position, const Color& borderColor, const Color& boardColor);
+		void drawGrid(const Position2& startPosition);
 
 	public:
 		bool move(EDirection eDirection);
@@ -98,7 +99,12 @@ namespace fs
 		bool tickGameSpeedTimer() const;
 
 	public:
-		uint32 getScore() const;
+		void updateGameLevel();
+
+	public:
+		uint32 getCurrScore() const;
+		uint32 getCurrLevel() const;
+		uint32 getCurrLevelScore() const;
 
 	public:
 		bool isGameOver() const;
@@ -147,7 +153,7 @@ namespace fs
 	private:
 		// 밀리초 = ms
 		// 마이크로초 = us (그리스어 뮤랑 제일 닮아서)
-		int32 _timerInterval{ 1000 };
+		int32 _gameSpeed{ 1010 };
 		mutable std::chrono::steady_clock::time_point _prevTime{};
 
 	private:
@@ -159,7 +165,11 @@ namespace fs
 		std::deque<EBlockType> _nextBlockQueue{};
 
 	private:
-		uint32 _score{};
+		uint32 _currLevel{};
+		uint32 _currScore{};
+		uint32 _currLevelScore{};
+		uint32 _scoreForNextLevel{ 1000 };
+
 
 	private:
 		bool _isGameOver{ false };

@@ -18,7 +18,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	g_simpleTetris.addFont(L"Consolas", 20, false);
 	g_simpleTetris.addFont(L"Jokerman", 46, false);
-	g_simpleTetris.addFont(L"휴먼매직체", 26, true);
+	g_simpleTetris.addFont(L"휴먼매직체", 20, true);
 	g_simpleTetris.addFont(L"휴먼매직체", 80, true);
 
 	const Position2 boardPosition{ 10, 80 };
@@ -30,6 +30,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	while (g_simpleTetris.update() == true)
 	{
 		g_simpleTetris.updateNextblockQueue();
+
+		g_simpleTetris.updateGameLevel();
 
 		//gameover가 아닌 상황.
 		if (g_simpleTetris.isGameOver() == false)
@@ -72,13 +74,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					}
 					g_simpleTetris.setCurrBlockType((EBlockType)iNextBlockType);
 				}
+#if defined DEBUG || _DEBUG
 				if (GetAsyncKeyState('W') == SHORT(0x8001))
 				{
 					auto timerInterval{ g_simpleTetris.getTimerInterval() };
 
 					g_simpleTetris.setTimerInterval(timerInterval - 50);
 				}
-
+#endif 
 				if (g_simpleTetris.tickGameSpeedTimer() == true)
 				{
 					g_simpleTetris.move(EDirection::S);
@@ -102,7 +105,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			/*g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 110, 0), L"FPS: " + g_simpleTetris.getFpsWstring(), fpsColor);*/
 			g_simpleTetris.useFont(2);
-			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 50), L"SCORE: " + std::to_wstring(g_simpleTetris.getScore()), fpsColor);
+			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 25), L"SCORE: " + std::to_wstring(g_simpleTetris.getCurrScore()), fpsColor);
+			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 45), L"LEVEL: " + std::to_wstring(g_simpleTetris.getCurrLevel()), fpsColor);
+			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 65), L"EXP: " + std::to_wstring(g_simpleTetris.getCurrLevelScore()), fpsColor);
 
 			if (g_simpleTetris.isGameOver() == true)
 			{

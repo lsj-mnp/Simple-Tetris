@@ -287,6 +287,22 @@ void fs::IGraphicalWindow::drawImageAlphaToScreen(uint32 imageIndex, const Posit
 		_tempDc, 0, 0, static_cast<int>(image.size.x), static_cast<int>(image.size.y), 0);
 }
 
+void fs::IGraphicalWindow::drawImageAlphaToScreen(uint32 imageIndex, const Position2& position, uint8 alpha)
+{
+	assert(imageIndex < static_cast<uint32>(_vImages.size()));
+	const auto& image{ _vImages[imageIndex] };
+	SelectObject(_tempDc, image.bitmap);
+
+	BLENDFUNCTION blend{};
+	blend.BlendOp = AC_SRC_OVER;
+	blend.BlendFlags = 0;
+	blend.AlphaFormat = 0;
+	blend.SourceConstantAlpha = alpha;
+	AlphaBlend(_backDc, static_cast<int>(position.x), static_cast<int>(position.y),
+		static_cast<int>(image.size.x), static_cast<int>(image.size.y),
+		_tempDc, 0, 0, static_cast<int>(image.size.x), static_cast<int>(image.size.y), blend);
+}
+
 void fs::IGraphicalWindow::drawImagePrecomputedAlphaToScreen(uint32 imageIndex, const Position2& position)
 {
 	assert(imageIndex < static_cast<uint32>(_vImages.size()));
@@ -325,6 +341,19 @@ void fs::IGraphicalWindow::drawTextToScreen(const Position2& position, const Siz
 	rect.bottom = rect.top + static_cast<LONG>(area.y);
 	SetTextColor(_backDc, RGB(color.r, color.g, color.b));
 	DrawTextW(_backDc, content.c_str(), static_cast<int>(content.size()), &rect, HorzAlign | VertAlign | DT_NOCLIP | DT_SINGLELINE);
+}
+
+void fs::IGraphicalWindow::drawLineToScreen(const Position2& positionA, const Position2& positionB, const Color& color)
+{
+	const HBRUSH brush{ CreateSolidBrush(RGB(color.r, color.g, color.b)) };
+	const HBRUSH prevBrush{ (HBRUSH)SelectObject(_backDc, brush) };
+
+	POINT point{};
+	MoveToEx(_backDc, (int32)positionA.x, (int32)positionA.y, &point);
+	LineTo(_backDc, (int32)positionB.x, (int32)positionB.y);
+	
+	SelectObject(_backDc, prevBrush);
+	DeleteObject(brush);
 }
 
 fs::uint32 fs::IGraphicalWindow::getFps() const noexcept

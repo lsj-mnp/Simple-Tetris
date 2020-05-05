@@ -261,6 +261,8 @@ void fs::SimpleTetris::drawBoard(const Position2& position, const Color& borderC
 	// 현재 블록
 	drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
 
+	drawGrid(position);
+
 	Position2 nextBLockPosition{ position + Position2(kBoardSizePixel.x + 30, 10) };
 
 	//다음 블록 테두리
@@ -281,6 +283,53 @@ void fs::SimpleTetris::drawBoard(const Position2& position, const Color& borderC
 				drawImageToScreen(_iiBlocks[block], position + kBlockSize * Position2(x, y));
 			}
 		}
+	}
+
+
+	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
+	bool shouldDraw{ false };
+	//max = 둘 중 큰 숫자를 가져오는 매크로임. 따라서 최소값을 지정하려면 max를 사용해야 함.(더 작은 숫자를 무시함.)
+	for (int i = max(_currPosition.y, 0); i < kBoardSize.y; ++i)
+	{
+		if (canDrawBlock(_currBlockType, Position2(_currPosition.x, i), _currDirection) == true)
+		{
+			shouldDraw = true;
+		}
+		else
+		{
+			if (shouldDraw == true)
+			{
+				uint32 iCurrBlockType{ (uint32)_currBlockType };
+				uint32 iCurrDirection{ (uint32)_currDirection };
+				for (int32 y = 0; y < kBlockContainerSize; ++y)
+				{
+					for (int32 x = 0; x < kBlockContainerSize; ++x)
+					{
+						if (_blocks[iCurrBlockType][iCurrDirection].data[y][x] == 0) continue;
+
+						drawImageAlphaToScreen(_iiBlocks[iCurrBlockType],
+							position + kBlockSize * Position2(_currPosition.x + x, i - 1 + y), (uint8)127);
+					}
+				}
+			}
+			break;
+		}
+	}
+	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, false);
+}
+
+void fs::SimpleTetris::drawGrid(const fs::Position2& startPosition)
+{
+	for (int y = 0; y < (int)kBoardSize.y; ++y)
+	{
+		drawLineToScreen(Position2(startPosition.x, startPosition.y + (y * kBlockSize.y))
+			, Position2((startPosition.x + kBoardSizePixel.x - 1), startPosition.y + (y * kBlockSize.y)), Color(50, 50, 50));
+	}
+
+	for (int x = 0; x < (int)kBoardSize.x; ++x)
+	{
+		drawLineToScreen(Position2(startPosition.x + (x * kBlockSize.x), startPosition.y)
+			, Position2(startPosition.x + (x * kBlockSize.x), startPosition.y + (kBoardSizePixel.y - 1)), Color(50, 50, 50));
 	}
 }
 
@@ -472,12 +521,12 @@ void fs::SimpleTetris::setTimerInterval(int32 interval)
 		interval = kTimerIntervalMin;
 	}
 
-	_timerInterval = interval;
+	_gameSpeed = interval;
 }
 
 fs::int32 fs::SimpleTetris::getTimerInterval() const
 {
-	return _timerInterval;
+	return _gameSpeed;
 }
 
 bool fs::SimpleTetris::tickGameSpeedTimer() const
@@ -486,7 +535,7 @@ bool fs::SimpleTetris::tickGameSpeedTimer() const
 
 	auto elapsed{ duration_cast<milliseconds>(steady_clock::now() - _prevTime) };
 
-	if (elapsed.count() >= _timerInterval)
+	if (elapsed.count() >= _gameSpeed)
 	{
 		_prevTime = steady_clock::now();
 
@@ -496,9 +545,34 @@ bool fs::SimpleTetris::tickGameSpeedTimer() const
 	return false;
 }
 
-fs::uint32 fs::SimpleTetris::getScore() const
+void fs::SimpleTetris::updateGameLevel()
 {
-	return _score;
+	if (_currLevelScore >= _scoreForNextLevel && _currLevel < 100)
+	{
+		++_currLevel;
+		_currLevelScore = 0;
+		_scoreForNextLevel += 500;
+
+		if (_gameSpeed > 50)
+		{
+			_gameSpeed -= 40;
+		}
+	}
+}
+
+fs::uint32 fs::SimpleTetris::getCurrScore() const
+{
+	return _currScore;
+}
+
+fs::uint32 fs::SimpleTetris::getCurrLevel() const
+{
+	return _currLevel;
+}
+
+fs::uint32 fs::SimpleTetris::getCurrLevelScore() const
+{
+	return _currLevelScore;
 }
 
 bool fs::SimpleTetris::isGameOver() const
@@ -512,6 +586,9 @@ void fs::SimpleTetris::restartGame()
 
 	_currPosition = getInitialBlockPosition();
 	_currBlockType = getRandomBlockType();
+	_currLevel = 1;
+	_currScore = 0;
+	_currLevelScore = 0;
 
 	//memset으로 하면 됨.
 	/*for (int32 y = 0; y < (int32)kBoardSize.y; ++y)
@@ -529,7 +606,7 @@ void fs::SimpleTetris::restartGame()
 	_nextBlockQueue.pop_front();
 	_nextBlockQueue.pop_front();
 
-	_score = 0;
+	_currScore = 0;
 }
 
 fs::Position2 fs::SimpleTetris::getInitialBlockPosition() const
@@ -575,7 +652,10 @@ void fs::SimpleTetris::checkBingo()
 		}
 	}
 
-	_score += (bingoCount * bingoCount) * 100;
+	uint32 deltaScore{ (bingoCount * bingoCount) * 100 };
+
+	_currScore += deltaScore;
+	_currLevelScore += deltaScore;
 }
 
 void fs::SimpleTetris::createBlock(EBlockType eBlockType, const Color& color, uint8 alpha)

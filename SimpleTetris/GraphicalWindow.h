@@ -189,10 +189,12 @@ namespace fs
 
 		void drawImageToScreen(uint32 imageIndex, const Position2& position);
 		void drawImageAlphaToScreen(uint32 imageIndex, const Position2& position);
+		void drawImageAlphaToScreen(uint32 imageIndex, const Position2& position, uint8 alpha);
 		void drawImagePrecomputedAlphaToScreen(uint32 imageIndex, const Position2& position);
 		void drawTextToScreen(const Position2& position, const std::wstring& content, const Color& color);
 		void drawTextToScreen(const Position2& position, const Size2& area, const std::wstring& content, const Color& color,
 			EHorzAlign eHorzAlign, EVertAlign eVertAlign);
+		void drawLineToScreen(const Position2& positionA, const Position2& positionB, const Color& color);
 
 	public:
 		uint32 getFps() const noexcept;
