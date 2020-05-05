@@ -1,4 +1,5 @@
 ﻿#include "SimpleTetris.h"
+#include <thread>
 
 
 fs::SimpleTetris::SimpleTetris(int32 width, int32 height) : IGraphicalWindow(width, height)
@@ -322,8 +323,7 @@ bool fs::SimpleTetris::move(EDirection eDirection)
 			}
 
 			_currDirection = EDirection::N;
-			_currPosition.x = (kBoardSize.x * 0.5) - (kBlockContainerSize * 0.5);
-			_currPosition.y = -(kBlockContainerSize * 0.5);
+			_currPosition = getInitialBlockPosition();
 			_currBlockType = _nextBlockQueue.front();
 
 			_nextBlockQueue.pop_front();
@@ -443,9 +443,9 @@ fs::EBlockType fs::SimpleTetris::getCurrBlockType() const
 	return _currBlockType;
 }
 
-fs::EBlockType fs::SimpleTetris::getNextBlockType() const
+fs::EBlockType fs::SimpleTetris::getRandomBlockType() const
 {
-	int32 iBlockType{ (rand() % 7) + 2 };
+	int32 iBlockType{ (int32)(((double)rand() / (double)(RAND_MAX + 1)) * 7.0) + 2 };
 
 	return (EBlockType)iBlockType;
 }
@@ -454,12 +454,14 @@ void fs::SimpleTetris::updateNextblockQueue()
 {
 	while (_nextBlockQueue.size() < kNextBlockQueueMinSize)
 	{
-		_nextBlockQueue.push_back(getNextBlockType());
+		_nextBlockQueue.push_back(getRandomBlockType());
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 
 	if (_nextBlockQueue.size() < kNextBlockQueueMaxSize && tickSecond() == true)
 	{
-		_nextBlockQueue.push_back(getNextBlockType());
+		_nextBlockQueue.push_back(getRandomBlockType());
 	}
 }
 
@@ -478,7 +480,7 @@ fs::int32 fs::SimpleTetris::getTimerInterval() const
 	return _timerInterval;
 }
 
-bool fs::SimpleTetris::tickTimer() const
+bool fs::SimpleTetris::tickGameSpeedTimer() const
 {
 	using namespace std::chrono;
 
@@ -502,6 +504,39 @@ fs::uint32 fs::SimpleTetris::getScore() const
 bool fs::SimpleTetris::isGameOver() const
 {
 	return _isGameOver;
+}
+
+void fs::SimpleTetris::restartGame()
+{
+	_isGameOver = false;
+
+	_currPosition = getInitialBlockPosition();
+	_currBlockType = getRandomBlockType();
+
+	//memset으로 하면 됨.
+	/*for (int32 y = 0; y < (int32)kBoardSize.y; ++y)
+	{
+		for (int32 x = 0; x < (int32)kBoardSize.x; ++x)
+		{
+			_board[y][x] = 0;
+		}
+	}*/
+
+	//float * float은 연산 오버플로우가 발생하므로 앞의 하나를 double로 캐스팅 한다.
+	memset(_board, 0, (size_t)((double)kBoardSize.x * kBoardSize.y));
+
+	_nextBlockQueue.pop_front();
+	_nextBlockQueue.pop_front();
+	_nextBlockQueue.pop_front();
+
+	_score = 0;
+}
+
+fs::Position2 fs::SimpleTetris::getInitialBlockPosition() const
+{
+	Position2 result{ (kBoardSize.x * 0.5) - (kBlockContainerSize * 0.5), -(kBlockContainerSize * 0.5) };
+
+	return result;
 }
 
 void fs::SimpleTetris::checkBingo()

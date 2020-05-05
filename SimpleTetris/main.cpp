@@ -25,10 +25,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Color clearColor{ 240, 240, 255 };
 	Color fpsColor{ 0, 0, 100 };
 
+	g_simpleTetris.restartGame();
+
 	while (g_simpleTetris.update() == true)
 	{
 		g_simpleTetris.updateNextblockQueue();
 
+		//gameover가 아닌 상황.
 		if (g_simpleTetris.isGameOver() == false)
 		{
 			if (g_simpleTetris.tickInput() == true)
@@ -69,7 +72,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					}
 					g_simpleTetris.setCurrBlockType((EBlockType)iNextBlockType);
 				}
-
 				if (GetAsyncKeyState('W') == SHORT(0x8001))
 				{
 					auto timerInterval{ g_simpleTetris.getTimerInterval() };
@@ -77,7 +79,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					g_simpleTetris.setTimerInterval(timerInterval - 50);
 				}
 
-				if (g_simpleTetris.tickTimer() == true)
+				if (g_simpleTetris.tickGameSpeedTimer() == true)
 				{
 					g_simpleTetris.move(EDirection::S);
 				}
@@ -107,6 +109,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				g_simpleTetris.useFont(3);
 				g_simpleTetris.drawTextToScreen(Position2(0, 0), Size2(g_kWidth, g_kHeight), L"GAME OVER"
 					, fpsColor, EHorzAlign::Center, EVertAlign::Center);
+				if (GetAsyncKeyState('R') == SHORT(0x8001))
+				{
+					g_simpleTetris.restartGame();
+				}
 			}
 		}
 		g_simpleTetris.endRendering();

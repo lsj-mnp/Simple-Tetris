@@ -87,7 +87,7 @@ namespace fs
 		EBlockType getCurrBlockType() const;
 
 	private:
-		EBlockType getNextBlockType() const;
+		EBlockType getRandomBlockType() const;
 
 	public:
 		void updateNextblockQueue();
@@ -95,13 +95,19 @@ namespace fs
 	public:
 		void setTimerInterval(int32 interval);
 		int32 getTimerInterval() const;
-		bool tickTimer() const;
+		bool tickGameSpeedTimer() const;
 
 	public:
 		uint32 getScore() const;
 
 	public:
 		bool isGameOver() const;
+
+	public:
+		void restartGame();
+
+	private:
+		Position2 getInitialBlockPosition() const;
 
 	private:
 		void checkBingo();
@@ -127,7 +133,6 @@ namespace fs
 		static constexpr int32 kBlockContainerSize{ 4 };
 		static constexpr int32 kNextBlockQueueMinSize{ 5 };
 		static constexpr int32 kNextBlockQueueMaxSize{ 20 };
-
 
 	private:
 		BlockContainer			_blocks[(uint32)EBlockType::MAX][(uint32)EDirection::MAX]{};
