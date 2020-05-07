@@ -58,6 +58,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				}
 				if (GetAsyncKeyState(VK_SPACE) == SHORT(0x8001))
 				{
+					g_simpleTetris.setCurrScore();
+					g_simpleTetris.setCurrLevelScore();
+
 					while (g_simpleTetris.move(EDirection::S) == true)
 					{
 

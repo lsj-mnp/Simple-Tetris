@@ -26,6 +26,7 @@ void fs::SimpleTetris::create(const std::wstring& title, HINSTANCE hInstance, WN
 	createBlock(EBlockType::InvL,	Color(  0, 180, 255));
 	createBlock(EBlockType::Z,		Color( 40, 255,	 40));
 	createBlock(EBlockType::S,		Color(255, 127,	255));
+	//createBlockToImage(EBlockType::S);
 
 	// I형 블록
 	{
@@ -255,6 +256,9 @@ void fs::SimpleTetris::drawBoard(const Position2& position, const Color& borderC
 	// 판 테두리
 	drawRectangleToScreen(position - Position2(10, 10), kBoardSizePixel + Size2(20, 20), borderColor);
 
+	//createImageFromFile()로 이미지 파일을 받아와서 보드나 판 이미지를 그릴 수 있다.
+	//받아온 이미지를 저장할 변수는 멤버변수로 따로 만들어줘야함.
+
 	// 판
 	drawRectangleToScreen(position, kBoardSizePixel, boardColor);
 
@@ -308,7 +312,7 @@ void fs::SimpleTetris::drawBoard(const Position2& position, const Color& borderC
 						if (_blocks[iCurrBlockType][iCurrDirection].data[y][x] == 0) continue;
 
 						drawImageAlphaToScreen(_iiBlocks[iCurrBlockType],
-							position + kBlockSize * Position2(_currPosition.x + x, i - 1 + y), (uint8)127);
+							position + kBlockSize * Position2(_currPosition.x + x, i - 1 + y), (uint8)63);
 					}
 				}
 			}
@@ -549,7 +553,7 @@ void fs::SimpleTetris::updateGameLevel()
 {
 	if (_currLevelScore >= _scoreForNextLevel && _currLevel < 100)
 	{
-		++_currLevel;
+		_currLevel += 1;
 		_currLevelScore = 0;
 		_scoreForNextLevel += 500;
 
@@ -563,6 +567,16 @@ void fs::SimpleTetris::updateGameLevel()
 fs::uint32 fs::SimpleTetris::getCurrScore() const
 {
 	return _currScore;
+}
+
+void fs::SimpleTetris::setCurrScore()
+{
+	_currScore += 100;
+}
+
+void fs::SimpleTetris::setCurrLevelScore()
+{
+	_currLevelScore += 100;
 }
 
 fs::uint32 fs::SimpleTetris::getCurrLevel() const
@@ -589,6 +603,8 @@ void fs::SimpleTetris::restartGame()
 	_currLevel = 1;
 	_currScore = 0;
 	_currLevelScore = 0;
+	_scoreForNextLevel = 500;
+	_gameSpeed = 1010;
 
 	//memset으로 하면 됨.
 	/*for (int32 y = 0; y < (int32)kBoardSize.y; ++y)
@@ -660,23 +676,42 @@ void fs::SimpleTetris::checkBingo()
 
 void fs::SimpleTetris::createBlock(EBlockType eBlockType, const Color& color, uint8 alpha)
 {
+	// === 버전 1
 	_iiBlocks[(uint32)eBlockType] = createBlankImage(kBlockSize);
 	drawBlockUnitToImage(eBlockType, Position2(0, 0), color, alpha);
+	// ===
 }
 
+void fs::SimpleTetris::createBlockToImage(EBlockType eBlockType)
+{
+	// === 버전 2
+	//_iiBlocks[(uint32)eBlockType] = createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/planet_2.png");
+	// ===
+}
+
+//블록 하나를 이미지에 그리는 함수.
 void fs::SimpleTetris::drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha)
 {
 	const auto imageIndex{ _iiBlocks[(uint32)eBlockType] };
+
+	// 중앙
 	drawRectangleToImage(imageIndex, position, kBlockSize, color, alpha);
 
 	//border: 테두리
+
+	// 어두운 줄 (세로)
 	drawRectangleToImage(imageIndex, position + Position2(kBlockSize.x, 0) - Position2(kBlockBorder, 0),
 		Size2(kBlockBorder, kBlockSize.y), Color::sub(color, Color(60, 60, 60)), alpha);
+
+	// 어두운 줄 (가로)
 	drawRectangleToImage(imageIndex, position + Position2(0, kBlockSize.y) - Position2(0, kBlockBorder),
 		Size2(kBlockSize.x, kBlockBorder), Color::sub(color, Color(60, 60, 60)), alpha);
 
+	// 밝은 줄 (세로)
 	drawRectangleToImage(imageIndex, position,
 		Size2(kBlockSize.x - 1, kBlockBorder), Color::add(color, Color(60, 60, 60)), alpha);
+
+	// 밝은 줄 (가로)
 	drawRectangleToImage(imageIndex, position,
 		Size2(kBlockBorder, kBlockSize.y - 1), Color::add(color, Color(60, 60, 60)), alpha);
 }

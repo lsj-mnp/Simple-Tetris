@@ -106,6 +106,9 @@ namespace fs
 		uint32 getCurrLevel() const;
 		uint32 getCurrLevelScore() const;
 
+		void setCurrScore();
+		void setCurrLevelScore();
+
 	public:
 		bool isGameOver() const;
 
@@ -120,6 +123,7 @@ namespace fs
 
 	private:
 		void createBlock(EBlockType eBlockType, const Color& color, uint8 alpha = 255);
+		void createBlockToImage(EBlockType eBlockType);
 
 	private:
 		void drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha = 255);
@@ -168,7 +172,7 @@ namespace fs
 		uint32 _currLevel{};
 		uint32 _currScore{};
 		uint32 _currLevelScore{};
-		uint32 _scoreForNextLevel{ 1000 };
+		uint32 _scoreForNextLevel{ 500 };
 
 
 	private:

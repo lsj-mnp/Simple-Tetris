@@ -86,6 +86,7 @@ fs::uint32 fs::IGraphicalWindow::createImageFromFile(const std::wstring& fileNam
 
 	int x{}, y{}, channelCount{};
 	auto pixels = stbi_load(fileNameA, &x, &y, &channelCount, 4);
+	assert(pixels != nullptr);
 
 	HBITMAP bitmap{ CreateBitmap(x, y, 1, channelCount * 8, pixels) };
 	_vImages.emplace_back(bitmap, Size2(static_cast<float>(x), static_cast<float>(y)));
@@ -345,15 +346,17 @@ void fs::IGraphicalWindow::drawTextToScreen(const Position2& position, const Siz
 
 void fs::IGraphicalWindow::drawLineToScreen(const Position2& positionA, const Position2& positionB, const Color& color)
 {
-	const HBRUSH brush{ CreateSolidBrush(RGB(color.r, color.g, color.b)) };
-	const HBRUSH prevBrush{ (HBRUSH)SelectObject(_backDc, brush) };
+	//const HBRUSH brush{ CreateSolidBrush(RGB(color.r, color.g, color.b)) };
+	const HPEN pen{ CreatePen(PS_SOLID, 1, RGB(color.r, color.g, color.b)) };
+	//const HBRUSH prevBrush{ (HBRUSH)SelectObject(_backDc, brush) };
+	const HPEN prevPen{ (HPEN)SelectObject(_backDc, pen) };
 
 	POINT point{};
 	MoveToEx(_backDc, (int32)positionA.x, (int32)positionA.y, &point);
 	LineTo(_backDc, (int32)positionB.x, (int32)positionB.y);
 	
-	SelectObject(_backDc, prevBrush);
-	DeleteObject(brush);
+	SelectObject(_backDc, prevPen);
+	DeleteObject(pen);
 }
 
 fs::uint32 fs::IGraphicalWindow::getFps() const noexcept
