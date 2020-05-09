@@ -159,7 +159,7 @@ namespace fs
 		// image의 index
 	private:
 		uint32	_iiBlocks[(uint32)EBlockType::MAX]{};
-		uint32  _iiBackground[(uint32)EBackground::Max]{};
+		uint32  _iiBackground{};
 		
 	private:
 		uint8 _board[uint32(kBoardSize.y)][uint32(kBoardSize.x)]{};

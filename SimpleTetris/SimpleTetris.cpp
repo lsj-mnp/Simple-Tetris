@@ -26,16 +26,16 @@ void fs::SimpleTetris::create(const std::wstring& title, HINSTANCE hInstance, WN
 	createBlock(EBlockType::InvL,	Color(  0, 180, 255));
 	createBlock(EBlockType::Z,		Color( 40, 255,	 40));
 	createBlock(EBlockType::S,		Color(255, 127,	255));*/
-	//createBackgroundFromImage(EBackground::Space, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/testbackground.png");
 
-	createBlockFromImage(EBlockType::I, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/red.png");
-	createBlockFromImage(EBlockType::T, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/purple.png");
-	createBlockFromImage(EBlockType::O, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/yellow.png");
-	createBlockFromImage(EBlockType::L, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/skyblue.png");
-	createBlockFromImage(EBlockType::InvL, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/blue.png");
-	createBlockFromImage(EBlockType::Z, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/green.png");
-	createBlockFromImage(EBlockType::S, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/pink.png");
+	createBlockFromImage(EBlockType::I, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/red.png");
+	createBlockFromImage(EBlockType::T, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/purple.png");
+	createBlockFromImage(EBlockType::O, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/yellow.png");
+	createBlockFromImage(EBlockType::L, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/skyblue.png");
+	createBlockFromImage(EBlockType::InvL, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/blue.png");
+	createBlockFromImage(EBlockType::Z, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/green.png");
+	createBlockFromImage(EBlockType::S, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/pink.png");
 
+	_iiBackground = createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/testbackground.png");
 	// I형 블록
 	{
 		_blocks[(int)EBlockType::I][(int)EDirection::N].set(
@@ -265,6 +265,9 @@ void fs::SimpleTetris::drawBoard(const Position2& position, const Color& borderC
 	//받아온 이미지를 저장할 변수는 멤버변수로 따로 만들어줘야함.
 	
 	//drawImageToScreen(_iiBackground[(uint32)EBackground::Space], Position2(0,0));
+	//createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/testbackground.png");
+
+	drawImageToScreen(_iiBackground, Position2(0, 0));
 
 	// 판 테두리
 	drawRectangleToScreen(position - Position2(10, 10), kBoardSizePixel + Size2(20, 20), borderColor);
@@ -701,7 +704,7 @@ void fs::SimpleTetris::createBlockFromImage(EBlockType eBlockType, const std::ws
 
 void fs::SimpleTetris::createBackgroundFromImage(EBackground eBackground, const std::wstring& filename)
 {
-	_iiBackground[(uint32)eBackground] = createImageFromFile(filename);
+	_iiBackground = createImageFromFile(filename);
 
 }
 
