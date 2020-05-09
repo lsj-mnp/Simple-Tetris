@@ -40,15 +40,22 @@ namespace fs
 	enum class EBlockType
 	{
 		None,
-		Used, // Gray
-		I, // Blue
-		T, // Purple
-		O, // Yellow
-		L, // Orange
-		InvL, // Skyblue
-		Z, // green
-		S, // Pink
+		Used, 
+		I, // 
+		T, // 
+		O, // 
+		L, // 
+		InvL, //
+		Z, // 
+		S, // 
 		MAX
+	};
+
+	enum class EBackground
+	{
+		None,
+		Space,
+		Max
 	};
 
 	enum class EDirection
@@ -123,7 +130,9 @@ namespace fs
 
 	private:
 		void createBlock(EBlockType eBlockType, const Color& color, uint8 alpha = 255);
-		void createBlockToImage(EBlockType eBlockType);
+		void createBlockFromImage(EBlockType eBlockType, const std::wstring& filename);
+
+		void createBackgroundFromImage(EBackground eBackground, const std::wstring& filename);
 
 	private:
 		void drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha = 255);
@@ -150,6 +159,7 @@ namespace fs
 		// image의 index
 	private:
 		uint32	_iiBlocks[(uint32)EBlockType::MAX]{};
+		uint32  _iiBackground[(uint32)EBackground::Max]{};
 		
 	private:
 		uint8 _board[uint32(kBoardSize.y)][uint32(kBoardSize.x)]{};
