@@ -26,7 +26,10 @@ void fs::SimpleTetris::create(const std::wstring& title, HINSTANCE hInstance, WN
 	createBlock(EBlockType::InvL,	Color(  0, 180, 255));
 	createBlock(EBlockType::Z,		Color( 40, 255,	 40));
 	createBlock(EBlockType::S,		Color(255, 127,	255));*/
+
 	//createBackgroundFromImage(EBackground::Space, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/testbackground.png");
+
+	createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/testbackground.png");
 
 	createBlockFromImage(EBlockType::I, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/red.png");
 	createBlockFromImage(EBlockType::T, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Asset/purple.png");
@@ -264,7 +267,7 @@ void fs::SimpleTetris::drawBoard(const Position2& position, const Color& borderC
 	//createImageFromFile()로 이미지 파일을 받아와서 보드나 판 이미지를 그릴 수 있다.
 	//받아온 이미지를 저장할 변수는 멤버변수로 따로 만들어줘야함.
 	
-	//drawImageToScreen(_iiBackground[(uint32)EBackground::Space], Position2(0,0));
+	//drawBackgroundToScreen(_iiBackground[(uint32)EBackground::Space], Position2(0,0));
 
 	// 판 테두리
 	drawRectangleToScreen(position - Position2(10, 10), kBoardSizePixel + Size2(20, 20), borderColor);
@@ -701,7 +704,7 @@ void fs::SimpleTetris::createBlockFromImage(EBlockType eBlockType, const std::ws
 
 void fs::SimpleTetris::createBackgroundFromImage(EBackground eBackground, const std::wstring& filename)
 {
-	_iiBackground[(uint32)eBackground] = createImageFromFile(filename);
+	_iiBackground[(uint32)eBackground] = createBackgroundFromFile(filename);
 
 }
 

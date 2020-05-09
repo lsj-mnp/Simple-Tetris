@@ -96,6 +96,23 @@ fs::uint32 fs::IGraphicalWindow::createImageFromFile(const std::wstring& fileNam
 	return static_cast<uint32>(_vImages.size() - 1);
 }
 
+fs::uint32 fs::IGraphicalWindow::createBackgroundFromFile(const std::wstring& fileName)
+{
+	char fileNameA[MAX_PATH]{};
+	WideCharToMultiByte(CP_ACP, 0, fileName.c_str(), static_cast<int>(fileName.size()), fileNameA, MAX_PATH, 0, FALSE);
+
+	int x{}, y{}, channelCount{};
+	auto pixels = stbi_load(fileNameA, &x, &y, &channelCount, 4);
+	assert(pixels != nullptr);
+
+	HBITMAP bitmap{ CreateBitmap(x, y, 1, channelCount * 8, pixels) };
+	_vBackgrounds.emplace_back(bitmap, Size2(static_cast<float>(x), static_cast<float>(y)));
+
+	stbi_image_free(pixels);
+
+	return static_cast<uint32>(_vBackgrounds.size() - 1);
+}
+
 fs::uint32 fs::IGraphicalWindow::createBlankImage(const Size2& size)
 {
 	HBITMAP bitmap{ CreateCompatibleBitmap(_backDc, static_cast<int>(size.x), static_cast<int>(size.y)) };
@@ -270,6 +287,17 @@ void fs::IGraphicalWindow::drawImageToScreen(uint32 imageIndex, const Position2&
 {
 	assert(imageIndex < static_cast<uint32>(_vImages.size()));
 	const auto& image{ _vImages[imageIndex] };
+	SelectObject(_tempDc, image.bitmap);
+
+	BitBlt(_backDc, static_cast<int>(position.x), static_cast<int>(position.y),
+		static_cast<int>(image.size.x), static_cast<int>(image.size.y),
+		_tempDc, 0, 0, SRCCOPY);
+}
+
+void fs::IGraphicalWindow::drawBackgroundToScreen(uint32 imageIndex, const Position2& position)
+{
+	assert(imageIndex < static_cast<uint32>(_vBackgrounds.size()));
+	const auto& image{ _vBackgrounds[imageIndex] };
 	SelectObject(_tempDc, image.bitmap);
 
 	BitBlt(_backDc, static_cast<int>(position.x), static_cast<int>(position.y),

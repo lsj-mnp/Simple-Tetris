@@ -134,6 +134,19 @@ namespace fs
 		Size2	size{};
 	};
 
+	struct Background
+	{
+		Background()
+		{
+			__noop;
+		}
+		Background(HBITMAP bitmap_, const Size2& size_) : bitmap{ bitmap_ }, size{ size_ }
+		{
+			__noop;
+		}
+		HBITMAP	bitmap{};
+		Size2	size{};
+	};
 
 	enum class EHorzAlign
 	{
@@ -171,6 +184,7 @@ namespace fs
 		void useFont(uint32 fontIndex);
 
 		uint32 createImageFromFile(const std::wstring& fileName);
+		uint32 createBackgroundFromFile(const std::wstring& fileName);
 		uint32 createBlankImage(const Size2& size);
 
 	public:
@@ -188,6 +202,7 @@ namespace fs
 		void drawRectangleToImage(uint32 imageIndex, const Position2& position, const Size2& size, const Color& color, uint8 alpha = 255);
 
 		void drawImageToScreen(uint32 imageIndex, const Position2& position);
+		void drawBackgroundToScreen(uint32 imageIndex, const Position2& position);
 		void drawImageAlphaToScreen(uint32 imageIndex, const Position2& position);
 		void drawImageAlphaToScreen(uint32 imageIndex, const Position2& position, uint8 alpha);
 		void drawImagePrecomputedAlphaToScreen(uint32 imageIndex, const Position2& position);
@@ -221,6 +236,7 @@ namespace fs
 		HDC						_tempDc{};
 		std::vector<HFONT>		_vFonts{};
 		std::vector<Image>		_vImages{};
+		std::vector<Background>	_vBackgrounds{};
 
 	private:
 		timePoint				_prevFrameTime{};
