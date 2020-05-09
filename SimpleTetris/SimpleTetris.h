@@ -48,7 +48,6 @@ namespace fs
 		InvL, //
 		Z, // 
 		S, // 
-		BackG,
 		MAX
 	};
 
