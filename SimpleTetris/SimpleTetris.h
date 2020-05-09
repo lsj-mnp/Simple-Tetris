@@ -160,6 +160,7 @@ namespace fs
 	private:
 		uint32	_iiBlocks[(uint32)EBlockType::MAX]{};
 		uint32  _iiBackground{};
+		uint32  _iiBackground2{};
 		
 	private:
 		uint8 _board[uint32(kBoardSize.y)][uint32(kBoardSize.x)]{};

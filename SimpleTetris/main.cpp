@@ -23,7 +23,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	const Position2 boardPosition{ 10, 80 };
 	Color clearColor{ 240, 240, 255 };
-	Color fpsColor{ 0, 0, 100 };
+	Color fpsColor{ 255, 255, 255 };
 
 	g_simpleTetris.restartGame();
 

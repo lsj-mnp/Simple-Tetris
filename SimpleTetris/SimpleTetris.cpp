@@ -36,6 +36,7 @@ void fs::SimpleTetris::create(const std::wstring& title, HINSTANCE hInstance, WN
 	createBlockFromImage(EBlockType::S, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/pink.png");
 
 	_iiBackground = createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/testbackground.png");
+	_iiBackground2 = createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sunset.png");
 	// I형 블록
 	{
 		_blocks[(int)EBlockType::I][(int)EDirection::N].set(
@@ -266,8 +267,15 @@ void fs::SimpleTetris::drawBoard(const Position2& position, const Color& borderC
 	
 	//drawImageToScreen(_iiBackground[(uint32)EBackground::Space], Position2(0,0));
 	//createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/testbackground.png");
-
-	drawImageToScreen(_iiBackground, Position2(0, 0));
+	
+	if (_currLevel <= 20)
+	{
+		drawImageToScreen(_iiBackground2, Position2(0, 0));
+	}
+	else
+	{
+		drawImageToScreen(_iiBackground, Position2(0, 0));
+	}
 
 	// 판 테두리
 	drawRectangleToScreen(position - Position2(10, 10), kBoardSizePixel + Size2(20, 20), borderColor);
@@ -568,7 +576,7 @@ void fs::SimpleTetris::updateGameLevel()
 	{
 		_currLevel += 1;
 		_currLevelScore = 0;
-		_scoreForNextLevel += 500;
+		_scoreForNextLevel += 250;
 
 		if (_gameSpeed > 50)
 		{
