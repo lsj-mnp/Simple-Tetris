@@ -2,17 +2,17 @@
 #include <thread>
 
 
-fs::SimpleTetris::SimpleTetris(int32 width, int32 height) : IGraphicalWindow(width, height)
+mnp::SimpleTetris::SimpleTetris(int32 width, int32 height) : IGraphicalWindow(width, height)
 {
 	__noop;
 }
 
-fs::SimpleTetris::~SimpleTetris()
+mnp::SimpleTetris::~SimpleTetris()
 {
 	__noop;
 }
 
-void fs::SimpleTetris::create(const std::wstring& title, HINSTANCE hInstance, WNDPROC windowProc)
+void mnp::SimpleTetris::set(const std::wstring& title, HINSTANCE hInstance, WNDPROC windowProc)
 {
 	createInternal(title, hInstance, windowProc);
 
@@ -260,7 +260,7 @@ void fs::SimpleTetris::create(const std::wstring& title, HINSTANCE hInstance, WN
 	_board[6][0] = 1;*/
 }
 
-void fs::SimpleTetris::drawBoard(const Position2& position, const Color& borderColor, const Color& boardColor)
+void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& borderColor, const Color& boardColor)
 {
 	//createImageFromFile()로 이미지 파일을 받아와서 보드나 판 이미지를 그릴 수 있다.
 	//받아온 이미지를 저장할 변수는 멤버변수로 따로 만들어줘야함.
@@ -343,7 +343,7 @@ void fs::SimpleTetris::drawBoard(const Position2& position, const Color& borderC
 	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, false);
 }
 
-void fs::SimpleTetris::drawGrid(const fs::Position2& startPosition)
+void mnp::SimpleTetris::drawGrid(const mnp::Position2& startPosition)
 {
 	for (int y = 0; y < (int)kBoardSize.y; ++y)
 	{
@@ -358,75 +358,68 @@ void fs::SimpleTetris::drawGrid(const fs::Position2& startPosition)
 	}
 }
 
-bool fs::SimpleTetris::move(EDirection eDirection)
+bool mnp::SimpleTetris::move(EDirection eDirection)
 {
 	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 
-	if (_isPaused == false)
+	switch (eDirection)
 	{
-		switch (eDirection)
+	case mnp::EDirection::N:
+		if (canDrawBlock(_currBlockType, _currPosition - Position2(0, 1), _currDirection) == true)
 		{
-		case fs::EDirection::N:
-			if (canDrawBlock(_currBlockType, _currPosition - Position2(0, 1), _currDirection) == true)
-			{
-				_currPosition.y -= 1;
+			_currPosition.y -= 1;
 
-				return true;
-			}
-			break;
-		case fs::EDirection::W:
-			if (canDrawBlock(_currBlockType, _currPosition + Position2(1, 0), _currDirection) == true)
-			{
-				_currPosition.x += 1;
-
-				return true;
-			}
-			break;
-		case fs::EDirection::S:
-			if (canDrawBlock(_currBlockType, _currPosition + Position2(0, 1), _currDirection) == true)
-			{
-				_currPosition.y += 1;
-
-				return true;
-			}
-			else
-			{
-				drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
-
-				if (_currPosition.y < 0)
-				{
-					_isGameOver = true;
-				}
-
-				_currDirection = EDirection::N;
-				_currPosition = getInitialBlockPosition();
-				_currBlockType = _nextBlockQueue.front();
-
-				_nextBlockQueue.pop_front();
-
-				checkBingo();
-			}
-			break;
-		case fs::EDirection::E:
-			if (canDrawBlock(_currBlockType, _currPosition - Position2(1, 0), _currDirection) == true)
-			{
-				_currPosition.x -= 1;
-
-				return true;
-			}
-			break;
-		default:
-			break;
+			return true;
 		}
-	}
-	else
-	{
-		return false;
+		break;
+	case mnp::EDirection::W:
+		if (canDrawBlock(_currBlockType, _currPosition + Position2(1, 0), _currDirection) == true)
+		{
+			_currPosition.x += 1;
 
+			return true;
+		}
+		break;
+	case mnp::EDirection::S:
+		if (canDrawBlock(_currBlockType, _currPosition + Position2(0, 1), _currDirection) == true)
+		{
+			_currPosition.y += 1;
+
+			return true;
+		}
+		else
+		{
+			drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
+
+			if (_currPosition.y < 0)
+			{
+				_isGameOver = true;
+			}
+
+			_currDirection = EDirection::N;
+			_currPosition = getInitialBlockPosition();
+			_currBlockType = _nextBlockQueue.front();
+
+			_nextBlockQueue.pop_front();
+
+			checkBingo();
+		}
+		break;
+	case mnp::EDirection::E:
+		if (canDrawBlock(_currBlockType, _currPosition - Position2(1, 0), _currDirection) == true)
+		{
+			_currPosition.x -= 1;
+
+			return true;
+		}
+		break;
+	default:
+		break;
 	}
+	return false;
 }
 
-void fs::SimpleTetris::rotate()
+void mnp::SimpleTetris::rotate()
 {
 	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 
@@ -458,7 +451,7 @@ void fs::SimpleTetris::rotate()
 	}
 }
 
-const bool fs::SimpleTetris::getRotatablePosition(EDirection eNextDirection, fs::Position2& outPosition) const
+const bool mnp::SimpleTetris::getRotatablePosition(EDirection eNextDirection, mnp::Position2& outPosition) const
 {
 	outPosition = _currPosition;
 	bool shouldPush{ false };
@@ -499,12 +492,12 @@ const bool fs::SimpleTetris::getRotatablePosition(EDirection eNextDirection, fs:
 	return shouldPush;
 }
 
-const fs::Position2& fs::SimpleTetris::getCurrPosition() const
+const mnp::Position2& mnp::SimpleTetris::getCurrPosition() const
 {
 	return _currPosition;
 }
 
-void fs::SimpleTetris::setCurrBlockType(EBlockType eBlockType)
+void mnp::SimpleTetris::setCurrBlockType(EBlockType eBlockType)
 {
 	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 
@@ -518,19 +511,19 @@ void fs::SimpleTetris::setCurrBlockType(EBlockType eBlockType)
 	}
 }
 
-fs::EBlockType fs::SimpleTetris::getCurrBlockType() const
+mnp::EBlockType mnp::SimpleTetris::getCurrBlockType() const
 {
 	return _currBlockType;
 }
 
-fs::EBlockType fs::SimpleTetris::getRandomBlockType() const
+mnp::EBlockType mnp::SimpleTetris::getRandomBlockType() const
 {
 	int32 iBlockType{ (int32)(((double)rand() / (double)(RAND_MAX + 1)) * 7.0) + 2 };
 
 	return (EBlockType)iBlockType;
 }
 
-void fs::SimpleTetris::updateNextblockQueue()
+void mnp::SimpleTetris::updateNextblockQueue()
 {
 	while (_nextBlockQueue.size() < kNextBlockQueueMinSize)
 	{
@@ -545,7 +538,7 @@ void fs::SimpleTetris::updateNextblockQueue()
 	}
 }
 
-void fs::SimpleTetris::setTimerInterval(int32 interval)
+void mnp::SimpleTetris::setTimerInterval(int32 interval)
 {
 	if (interval <= kTimerIntervalMin)
 	{
@@ -555,12 +548,12 @@ void fs::SimpleTetris::setTimerInterval(int32 interval)
 	_gameSpeed = interval;
 }
 
-fs::int32 fs::SimpleTetris::getTimerInterval() const
+mnp::int32 mnp::SimpleTetris::getTimerInterval() const
 {
 	return _gameSpeed;
 }
 
-bool fs::SimpleTetris::tickGameSpeedTimer() const
+bool mnp::SimpleTetris::tickGameSpeedTimer() const
 {
 	using namespace std::chrono;
 
@@ -576,13 +569,15 @@ bool fs::SimpleTetris::tickGameSpeedTimer() const
 	return false;
 }
 
-void fs::SimpleTetris::updateGameLevel()
+void mnp::SimpleTetris::updateGameLevel()
 {
 	if (_currLevelScore >= _scoreForNextLevel && _currLevel < 100)
 	{
 		++_currLevel;
 		_currLevelScore = 0;
 		_scoreForNextLevel += 250;
+
+		_isLevelUped = true;
 
 		if (_gameSpeed > 50)
 		{
@@ -591,48 +586,68 @@ void fs::SimpleTetris::updateGameLevel()
 	}
 }
 
-fs::uint32 fs::SimpleTetris::getCurrScore() const
+mnp::uint32 mnp::SimpleTetris::getCurrScore() const
 {
 	return _currScore;
 }
 
-void fs::SimpleTetris::setCurrScore()
+void mnp::SimpleTetris::addCurrScore()
 {
 	_currScore += 100;
 }
 
-void fs::SimpleTetris::setCurrLevelScore()
+void mnp::SimpleTetris::addCurrLevelScore()
 {
 	_currLevelScore += 100;
 }
 
-void fs::SimpleTetris::togglePause() const
+void mnp::SimpleTetris::togglePause() const
 {
 	//bool 변수를 이용한 토글 기능. ***
 	_isPaused = !_isPaused;
 }
 
-fs::uint32 fs::SimpleTetris::getCurrLevel() const
+void mnp::SimpleTetris::endLevelUped() const
+{
+	_isLevelUped = false;
+}
+
+mnp::uint32 mnp::SimpleTetris::getCurrLevel() const
 {
 	return _currLevel;
 }
 
-fs::uint32 fs::SimpleTetris::getCurrLevelScore() const
+mnp::uint32 mnp::SimpleTetris::getCurrLevelScore() const
 {
 	return _currLevelScore;
 }
 
-bool fs::SimpleTetris::getIsPaused() const
+mnp::uint32 mnp::SimpleTetris::getScoreForNextLevel() const
+{
+	return _scoreForNextLevel;
+}
+
+bool mnp::SimpleTetris::getIsPaused() const
 {
 	return _isPaused;
 }
 
-bool fs::SimpleTetris::isGameOver() const
+bool mnp::SimpleTetris::getIsLeveluped() const
+{
+	return _isLevelUped;
+}
+
+mnp::uint32 mnp::SimpleTetris::getComboCount() const
+{
+	return _comboCount;
+}
+
+bool mnp::SimpleTetris::isGameOver() const
 {
 	return _isGameOver;
 }
 
-void fs::SimpleTetris::restartGame()
+void mnp::SimpleTetris::restartGame()
 {
 	_isGameOver = false;
 
@@ -643,6 +658,7 @@ void fs::SimpleTetris::restartGame()
 	_currLevelScore = 0;
 	_scoreForNextLevel = 500;
 	_gameSpeed = 1010;
+	_comboCount = 0;
 
 	//memset으로 하면 됨.
 	/*for (int32 y = 0; y < (int32)kBoardSize.y; ++y)
@@ -663,14 +679,14 @@ void fs::SimpleTetris::restartGame()
 	_currScore = 0;
 }
 
-fs::Position2 fs::SimpleTetris::getInitialBlockPosition() const
+mnp::Position2 mnp::SimpleTetris::getInitialBlockPosition() const
 {
 	Position2 result{ (kBoardSize.x * 0.5) - (kBlockContainerSize * 0.5), -(kBlockContainerSize * 0.5) };
 
 	return result;
 }
 
-void fs::SimpleTetris::checkBingo()
+void mnp::SimpleTetris::checkBingo()
 {
 	int32 currY{ (int32)kBoardSize.y - 1 };
 	uint32 bingoCount{};
@@ -712,7 +728,7 @@ void fs::SimpleTetris::checkBingo()
 	_currLevelScore += deltaScore;
 }
 
-void fs::SimpleTetris::createBlock(EBlockType eBlockType, const Color& color, uint8 alpha)
+void mnp::SimpleTetris::createBlock(EBlockType eBlockType, const Color& color, uint8 alpha)
 {
 	// === 버전 1
 	_iiBlocks[(uint32)eBlockType] = createBlankImage(kBlockSize);
@@ -720,21 +736,21 @@ void fs::SimpleTetris::createBlock(EBlockType eBlockType, const Color& color, ui
 	// ===
 }
 
-void fs::SimpleTetris::createBlockFromImage(EBlockType eBlockType, const std::wstring &filename)
+void mnp::SimpleTetris::createBlockFromImage(EBlockType eBlockType, const std::wstring &filename)
 {
 	// === 버전 2
 	_iiBlocks[(uint32)eBlockType] = createImageFromFile(filename);
 	// ===
 }
 
-void fs::SimpleTetris::createBackgroundFromImage(EBackground eBackground, const std::wstring& filename)
+void mnp::SimpleTetris::createBackgroundFromImage(EBackground eBackground, const std::wstring& filename)
 {
 	_iiBackground = createImageFromFile(filename);
 
 }
 
 //블록 하나를 이미지에 그리는 함수.
-void fs::SimpleTetris::drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha)
+void mnp::SimpleTetris::drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha)
 {
 	const auto imageIndex{ _iiBlocks[(uint32)eBlockType] };
 
@@ -760,7 +776,7 @@ void fs::SimpleTetris::drawBlockUnitToImage(EBlockType eBlockType, const Positio
 		Size2(kBlockBorder, kBlockSize.y - 1), Color::add(color, Color(60, 60, 60)), alpha);
 }
 
-void fs::SimpleTetris::drawBlockToBoard(EBlockType eBlockType, const Position2& position, EDirection eDirection, bool bErase)
+void mnp::SimpleTetris::drawBlockToBoard(EBlockType eBlockType, const Position2& position, EDirection eDirection, bool bErase)
 {
 	const int32 x{ int32(position.x) };
 	const int32 y{ int32(position.y) };
@@ -781,7 +797,7 @@ void fs::SimpleTetris::drawBlockToBoard(EBlockType eBlockType, const Position2& 
 	}
 }
 
-void fs::SimpleTetris::drawBlockToScreen(EBlockType eBlockType, const Position2& position, EDirection eDirection)
+void mnp::SimpleTetris::drawBlockToScreen(EBlockType eBlockType, const Position2& position, EDirection eDirection)
 {
 	int32 blockType{ (int32)eBlockType };
 	const auto& block{ _blocks[blockType][(uint32)eDirection] };
@@ -798,7 +814,7 @@ void fs::SimpleTetris::drawBlockToScreen(EBlockType eBlockType, const Position2&
 	}
 }
 
-bool fs::SimpleTetris::canDrawBlock(EBlockType eBlockType, const Position2& position, EDirection eDirection) const
+bool mnp::SimpleTetris::canDrawBlock(EBlockType eBlockType, const Position2& position, EDirection eDirection) const
 {
 	const int32 x{ int32(position.x) };
 	const int32 y{ int32(position.y) };

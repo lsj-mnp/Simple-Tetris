@@ -3,8 +3,9 @@
 #include "GraphicalWindow.h"
 //#include <queue>
 #include <deque>
+#include "CommonTypes.h"
 
-namespace fs
+namespace mnp
 {
 	struct BlockContainer
 	{
@@ -74,7 +75,7 @@ namespace fs
 		~SimpleTetris();
 
 	public:
-		virtual void create(const std::wstring& title, HINSTANCE hInstance, WNDPROC windowProc) override;
+		virtual void set(const std::wstring& title, HINSTANCE hInstance, WNDPROC windowProc) override;
 
 	public:
 		void drawBoard(const Position2& position, const Color& borderColor, const Color& boardColor);
@@ -85,7 +86,7 @@ namespace fs
 		void rotate();
 
 	private:
-		const bool getRotatablePosition(EDirection eNextDirection, fs::Position2& outPosition) const;
+		const bool getRotatablePosition(EDirection eNextDirection, mnp::Position2& outPosition) const;
 
 	public:
 		const Position2& getCurrPosition() const;
@@ -112,11 +113,15 @@ namespace fs
 		uint32 getCurrScore() const;
 		uint32 getCurrLevel() const;
 		uint32 getCurrLevelScore() const;
+		uint32 getScoreForNextLevel() const;
 		bool getIsPaused() const;
+		bool getIsLeveluped() const;
+		uint32 getComboCount() const;
 
-		void setCurrScore();
-		void setCurrLevelScore();
+		void addCurrScore();
+		void addCurrLevelScore();
 		void togglePause() const;
+		void endLevelUped() const;
 
 	public:
 		bool isGameOver() const;
@@ -186,10 +191,11 @@ namespace fs
 		uint32 _currScore{};
 		uint32 _currLevelScore{};
 		uint32 _scoreForNextLevel{ 500 };
-
+		uint32 _comboCount{};
 
 	private:
 		bool _isGameOver{ false };
 		mutable bool _isPaused{ false };
+		mutable bool _isLevelUped{ false };
 	};
 }
