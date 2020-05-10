@@ -362,62 +362,68 @@ bool fs::SimpleTetris::move(EDirection eDirection)
 {
 	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 
-	switch (eDirection)
+	if (_isPaused == false)
 	{
-	case fs::EDirection::N:
-		if (canDrawBlock(_currBlockType, _currPosition - Position2(0, 1), _currDirection) == true)
+		switch (eDirection)
 		{
-			_currPosition.y -= 1;
-
-			return true;
-		}
-		break;
-	case fs::EDirection::W:
-		if (canDrawBlock(_currBlockType, _currPosition + Position2(1, 0), _currDirection) == true)
-		{
-			_currPosition.x += 1;
-
-			return true;
-		}
-		break;
-	case fs::EDirection::S:
-		if (canDrawBlock(_currBlockType, _currPosition + Position2(0, 1), _currDirection) == true)
-		{
-			_currPosition.y += 1;
-			
-			return true;
-		}
-		else
-		{
-			drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
-
-			if (_currPosition.y < 0)
+		case fs::EDirection::N:
+			if (canDrawBlock(_currBlockType, _currPosition - Position2(0, 1), _currDirection) == true)
 			{
-				_isGameOver = true;
+				_currPosition.y -= 1;
+
+				return true;
 			}
+			break;
+		case fs::EDirection::W:
+			if (canDrawBlock(_currBlockType, _currPosition + Position2(1, 0), _currDirection) == true)
+			{
+				_currPosition.x += 1;
 
-			_currDirection = EDirection::N;
-			_currPosition = getInitialBlockPosition();
-			_currBlockType = _nextBlockQueue.front();
+				return true;
+			}
+			break;
+		case fs::EDirection::S:
+			if (canDrawBlock(_currBlockType, _currPosition + Position2(0, 1), _currDirection) == true)
+			{
+				_currPosition.y += 1;
 
-			_nextBlockQueue.pop_front();
+				return true;
+			}
+			else
+			{
+				drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
 
-			checkBingo();
+				if (_currPosition.y < 0)
+				{
+					_isGameOver = true;
+				}
+
+				_currDirection = EDirection::N;
+				_currPosition = getInitialBlockPosition();
+				_currBlockType = _nextBlockQueue.front();
+
+				_nextBlockQueue.pop_front();
+
+				checkBingo();
+			}
+			break;
+		case fs::EDirection::E:
+			if (canDrawBlock(_currBlockType, _currPosition - Position2(1, 0), _currDirection) == true)
+			{
+				_currPosition.x -= 1;
+
+				return true;
+			}
+			break;
+		default:
+			break;
 		}
-		break;
-	case fs::EDirection::E:
-		if (canDrawBlock(_currBlockType, _currPosition - Position2(1, 0), _currDirection) == true)
-		{
-			_currPosition.x -= 1;
-
-			return true;
-		}
-		break;
-	default:
-		break;
 	}
+	else
+	{
+		return false;
 
-	return false;
+	}
 }
 
 void fs::SimpleTetris::rotate()
@@ -574,7 +580,7 @@ void fs::SimpleTetris::updateGameLevel()
 {
 	if (_currLevelScore >= _scoreForNextLevel && _currLevel < 100)
 	{
-		_currLevel += 1;
+		++_currLevel;
 		_currLevelScore = 0;
 		_scoreForNextLevel += 250;
 
@@ -600,6 +606,12 @@ void fs::SimpleTetris::setCurrLevelScore()
 	_currLevelScore += 100;
 }
 
+void fs::SimpleTetris::togglePause() const
+{
+	//bool 변수를 이용한 토글 기능. ***
+	_isPaused = !_isPaused;
+}
+
 fs::uint32 fs::SimpleTetris::getCurrLevel() const
 {
 	return _currLevel;
@@ -608,6 +620,11 @@ fs::uint32 fs::SimpleTetris::getCurrLevel() const
 fs::uint32 fs::SimpleTetris::getCurrLevelScore() const
 {
 	return _currLevelScore;
+}
+
+bool fs::SimpleTetris::getIsPaused() const
+{
+	return _isPaused;
 }
 
 bool fs::SimpleTetris::isGameOver() const

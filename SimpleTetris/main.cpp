@@ -1,5 +1,14 @@
 ﻿#include "SimpleTetris.h"
 //shift+f12 : 참조검색. 해당 함수 혹은 변수가 사용된 위치를 알려줌.
+//ctrl + shift +t, alt + (달러표시) 해당 위치로 이동.
+/*
+todo
+//=========
+레벨업 시 이펙트 추가
+블록 콤보 이펙트 추가
+//=========
+특정 레벨당 배경 변경 추가
+*/
 
 static constexpr fs::int32 g_kWidth{ 600 };
 static constexpr fs::int32 g_kHeight{ 1000 };
@@ -67,6 +76,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					}
 					//g_simpleTetris.rotate();
 				}
+				if (GetAsyncKeyState('P') == SHORT(0x8001))
+				{
+					g_simpleTetris.togglePause();
+				}
+#if defined DEBUG || _DEBUG
+				if (GetAsyncKeyState('W') == SHORT(0x8001))
+				{
+					auto timerInterval{ g_simpleTetris.getTimerInterval() };
+
+					g_simpleTetris.setTimerInterval(timerInterval - 50);
+				}
+
 				if (GetAsyncKeyState('Q') == SHORT(0x8001))
 				{
 					auto currBlockType = g_simpleTetris.getCurrBlockType();
@@ -76,13 +97,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						iNextBlockType = 2;
 					}
 					g_simpleTetris.setCurrBlockType((EBlockType)iNextBlockType);
-				}
-#if defined DEBUG || _DEBUG
-				if (GetAsyncKeyState('W') == SHORT(0x8001))
-				{
-					auto timerInterval{ g_simpleTetris.getTimerInterval() };
-
-					g_simpleTetris.setTimerInterval(timerInterval - 50);
 				}
 #endif 
 				if (g_simpleTetris.tickGameSpeedTimer() == true)
@@ -101,12 +115,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			g_simpleTetris.drawTextToScreen(Position2(0, 0), Size2(SimpleTetris::kBoardSizePixel.x + 20, boardPosition.y - 10), L"TETRIS", Color(200, 100, 100),
 				EHorzAlign::Center, EVertAlign::Center);
 
-			/*g_simpleTetris.useFont(0);
-			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 110, 25), L"POS: " +
-				std::to_wstring(int32(g_simpleTetris.getCurrPosition().x)) + L", " +
-				std::to_wstring(int32(g_simpleTetris.getCurrPosition().y)), Color(0, 0, 0));*/
+			//g_simpleTetris.useFont(0);
+			//g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 110, 25), L"POS: " +
+			//	std::to_wstring(int32(g_simpleTetris.getCurrPosition().x)) + L", " +
+			//	std::to_wstring(int32(g_simpleTetris.getCurrPosition().y)), Color(0, 0, 0));
+			g_simpleTetris.useFont(2);
 
-			/*g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 110, 0), L"FPS: " + g_simpleTetris.getFpsWstring(), fpsColor);*/
+			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 0), L"FPS: " + g_simpleTetris.getFpsWstring(), fpsColor);
+
 			g_simpleTetris.useFont(2);
 			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 25), L"SCORE: " + std::to_wstring(g_simpleTetris.getCurrScore()), fpsColor);
 			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 45), L"LEVEL: " + std::to_wstring(g_simpleTetris.getCurrLevel()), fpsColor);
@@ -121,6 +137,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				{
 					g_simpleTetris.restartGame();
 				}
+			}
+
+			if (g_simpleTetris.getIsPaused() == true)
+			{
+				g_simpleTetris.useFont(3);
+				g_simpleTetris.drawTextToScreen(Position2(0, 0), Size2(g_kWidth, g_kHeight), L"PAUSE"
+					, fpsColor, EHorzAlign::Center, EVertAlign::Center);
 			}
 		}
 		g_simpleTetris.endRendering();

@@ -112,9 +112,11 @@ namespace fs
 		uint32 getCurrScore() const;
 		uint32 getCurrLevel() const;
 		uint32 getCurrLevelScore() const;
+		bool getIsPaused() const;
 
 		void setCurrScore();
 		void setCurrLevelScore();
+		void togglePause() const;
 
 	public:
 		bool isGameOver() const;
@@ -188,5 +190,6 @@ namespace fs
 
 	private:
 		bool _isGameOver{ false };
+		mutable bool _isPaused{ false };
 	};
 }
