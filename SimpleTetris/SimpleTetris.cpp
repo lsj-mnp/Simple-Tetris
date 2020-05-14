@@ -611,6 +611,19 @@ void mnp::SimpleTetris::updateGameLevel()
 	}
 }
 
+void mnp::SimpleTetris::increasingGameLevel()
+{
+	if (_currLevel <= 100)
+	{
+		_currLevel += 10;
+
+		if (_currLevel >= 100)
+		{
+			_currLevel = 100;
+		}
+	}
+}
+
 mnp::uint32 mnp::SimpleTetris::getCurrScore() const
 {
 	return _currScore;

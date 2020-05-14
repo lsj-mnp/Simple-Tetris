@@ -112,6 +112,7 @@ namespace mnp
 
 	public:
 		void updateGameLevel();
+		void increasingGameLevel();
 
 	public:
 		uint32 getCurrScore() const;
