@@ -4,11 +4,7 @@
 //ctrl + shift +t, alt + (달러표시) 해당 위치로 이동.
 /*
 todo
-//=========
-레벨업 시 이펙트 추가
 블록 콤보 이펙트 추가
-//=========
-특정 레벨당 배경 변경 추가
 */
 
 static constexpr mnp::int32 g_kWidth{ 600 };
@@ -38,7 +34,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	static constexpr Color kDefaultColor{ 255, 255, 255 };
 	static constexpr Position2 boardPosition{ 10, 80 };
 	Color clearColor{ 240, 240, 255 };
-	Color fpsColor{ kDefaultColor };
+	Color normalFontColor{ kDefaultColor };
 	Color levelColor{ kDefaultColor };
 	
 	g_simpleTetris.restartGame();
@@ -144,7 +140,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #if defined DEBUG || _DEBUG
 			g_simpleTetris.useFont(2);
 
-			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 0), L"FPS: " + g_simpleTetris.getFpsWstring(), fpsColor);
+			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 0), L"FPS: " + g_simpleTetris.getFpsWstring(), normalFontColor);
 #endif 
 
 			if (g_simpleTetris.getIsLeveluped() == true)
@@ -170,15 +166,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 
 			g_simpleTetris.useFont(2);
-			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 25), L"SCORE: " + std::to_wstring(g_simpleTetris.getCurrScore()), fpsColor);
-			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 65), L"EXP: " + std::to_wstring(g_simpleTetris.getCurrLevelScore()), fpsColor);
+			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 25), L"SCORE: " + std::to_wstring(g_simpleTetris.getCurrScore()), normalFontColor);
+			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 65), L"EXP: " + std::to_wstring(g_simpleTetris.getCurrLevelScore()), normalFontColor);
 			g_simpleTetris.drawTextToScreen(Position2(g_kWidth - 250, 45), L"LEVEL: " + std::to_wstring(g_simpleTetris.getCurrLevel()), levelColor);
 
 			if (g_simpleTetris.isGameOver() == true)
 			{
 				g_simpleTetris.useFont(3);
 				g_simpleTetris.drawTextToScreen(Position2(0, 0), Size2(g_kWidth, g_kHeight), L"GAME OVER"
-					, fpsColor, EHorzAlign::Center, EVertAlign::Center);
+					, normalFontColor, EHorzAlign::Center, EVertAlign::Center);
 				if (GetAsyncKeyState('R') == SHORT(0x8001))
 				{
 					g_simpleTetris.restartGame();
@@ -189,7 +185,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				g_simpleTetris.useFont(3);
 				g_simpleTetris.drawTextToScreen(Position2(0, 0), Size2(g_kWidth, g_kHeight), L"PAUSE"
-					, fpsColor, EHorzAlign::Center, EVertAlign::Center);
+					, normalFontColor, EHorzAlign::Center, EVertAlign::Center);
 			}
 		}
 		g_simpleTetris.endRendering();

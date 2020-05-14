@@ -55,7 +55,11 @@ namespace mnp
 	enum class EBackground
 	{
 		None,
+		Sea,
+		Sunset,
 		Space,
+		Sun,
+		BlackHole,
 		Max
 	};
 
@@ -166,7 +170,7 @@ namespace mnp
 		// image의 index
 	private:
 		uint32	_iiBlocks[(uint32)EBlockType::MAX]{};
-		uint32  _iiBackground{};
+		uint32  _iiBackground[(uint32) EBackground::Max]{};
 		uint32  _iiBackground2{};
 		
 	private:

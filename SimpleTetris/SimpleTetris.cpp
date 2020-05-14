@@ -35,8 +35,12 @@ void mnp::SimpleTetris::set(const std::wstring& title, HINSTANCE hInstance, WNDP
 	createBlockFromImage(EBlockType::Z, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/green.png");
 	createBlockFromImage(EBlockType::S, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/pink.png");
 
-	_iiBackground = createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/testbackground.png");
-	_iiBackground2 = createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sunset.png");
+	createBackgroundFromImage(EBackground::Sea, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sea.png");
+	createBackgroundFromImage(EBackground::Sunset, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sunset.png");
+	createBackgroundFromImage(EBackground::Space, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/space.png");
+	createBackgroundFromImage(EBackground::Sun, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sun.png");
+	createBackgroundFromImage(EBackground::BlackHole, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/blackhole.png");
+
 	// I형 블록
 	{
 		_blocks[(int)EBlockType::I][(int)EDirection::N].set(
@@ -270,11 +274,23 @@ void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& border
 	
 	if (_currLevel <= 20)
 	{
-		drawImageToScreen(_iiBackground2, Position2(0, 0));
+		drawImageToScreen(_iiBackground[(uint32)EBackground::Sea], Position2(0, 0));
+	}
+	else if(_currLevel >= 21 && _currLevel <= 40)
+	{
+		drawImageToScreen(_iiBackground[(uint32)EBackground::Sunset], Position2(0, 0));
+	}
+	else if(_currLevel >= 41 && _currLevel <= 60)
+	{
+		drawImageToScreen(_iiBackground[(uint32)EBackground::Space], Position2(0, 0));
+	}
+	else if (_currLevel >= 61 && _currLevel <= 80)
+	{
+		drawImageToScreen(_iiBackground[(uint32)EBackground::Sun], Position2(0, 0));
 	}
 	else
 	{
-		drawImageToScreen(_iiBackground, Position2(0, 0));
+		drawImageToScreen(_iiBackground[(uint32)EBackground::BlackHole], Position2(0, 0));
 	}
 
 	// 판 테두리
@@ -297,6 +313,7 @@ void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& border
 	drawBlockToScreen(_nextBlockQueue[0], nextBLockPosition + kBlockSize, EDirection::N);
 	drawBlockToScreen(_nextBlockQueue[1], nextBLockPosition + Size2(kBlockSize.x, kBlockSize.y * 6), EDirection::N);
 
+	//보드에 블록을 그리는 for문
 	for (float y = 0; y < kBoardSize.y; y += 1)
 	{
 		for (float x = 0; x < kBoardSize.x; x += 1)
@@ -310,36 +327,44 @@ void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& border
 		}
 	}
 
-
-	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
-	bool shouldDraw{ false };
-	//max = 둘 중 큰 숫자를 가져오는 매크로임. 따라서 최소값을 지정하려면 max를 사용해야 함.(더 작은 숫자를 무시함.)
-	for (int i = max(_currPosition.y, 0); i < kBoardSize.y; ++i)
+	if (_currLevel <= 30)
 	{
-		if (canDrawBlock(_currBlockType, Position2(_currPosition.x, i), _currDirection) == true)
+		//보드에 반투명 블록을 그리는 for문
+		drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
+		bool shouldDraw{ false };
+		//max = 둘 중 큰 숫자를 가져오는 매크로임. 따라서 최소값을 지정하려면 max를 사용해야 함.(더 작은 숫자를 무시함.)
+		for (int i = max(_currPosition.y, 0); i < kBoardSize.y; ++i)
 		{
-			shouldDraw = true;
-		}
-		else
-		{
-			if (shouldDraw == true)
+			if (canDrawBlock(_currBlockType, Position2(_currPosition.x, i), _currDirection) == true)
 			{
-				uint32 iCurrBlockType{ (uint32)_currBlockType };
-				uint32 iCurrDirection{ (uint32)_currDirection };
-				for (int32 y = 0; y < kBlockContainerSize; ++y)
+				shouldDraw = true;
+			}
+			else
+			{
+				if (shouldDraw == true)
 				{
-					for (int32 x = 0; x < kBlockContainerSize; ++x)
+					uint32 iCurrBlockType{ (uint32)_currBlockType };
+					uint32 iCurrDirection{ (uint32)_currDirection };
+					for (int32 y = 0; y < kBlockContainerSize; ++y)
 					{
-						if (_blocks[iCurrBlockType][iCurrDirection].data[y][x] == 0) continue;
+						for (int32 x = 0; x < kBlockContainerSize; ++x)
+						{
+							if (_blocks[iCurrBlockType][iCurrDirection].data[y][x] == 0) continue;
 
-						drawImageAlphaToScreen(_iiBlocks[iCurrBlockType],
-							position + kBlockSize * Position2(_currPosition.x + x, i - 1 + y), (uint8)63);
+							drawImageAlphaToScreen(_iiBlocks[iCurrBlockType],
+								position + kBlockSize * Position2(_currPosition.x + x, i - 1 + y), (uint8)63);
+						}
 					}
 				}
+				break;
 			}
-			break;
 		}
 	}
+	else
+	{
+		__noop;
+	}
+
 	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, false);
 }
 
@@ -745,8 +770,7 @@ void mnp::SimpleTetris::createBlockFromImage(EBlockType eBlockType, const std::w
 
 void mnp::SimpleTetris::createBackgroundFromImage(EBackground eBackground, const std::wstring& filename)
 {
-	_iiBackground = createImageFromFile(filename);
-
+	_iiBackground[(uint32)eBackground] = createImageFromFile(filename);
 }
 
 //블록 하나를 이미지에 그리는 함수.
