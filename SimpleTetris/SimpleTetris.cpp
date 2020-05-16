@@ -747,6 +747,7 @@ void mnp::SimpleTetris::restartGame()
 	//float * float은 연산 오버플로우가 발생하므로 앞의 하나를 double로 캐스팅 한다.
 	memset(_board, 0, (size_t)((double)kBoardSize.x * kBoardSize.y));
 
+#if defined DEBUG || _DEBUG
 	for (int y = 0; y < 2; ++y)
 	{
 		for (int x = 0; x < kBoardSize.x; ++x)
@@ -755,6 +756,7 @@ void mnp::SimpleTetris::restartGame()
 			_board[(int32)kBoardSize.y - 1 - y][x] = (uint32)EBlockType::Used;
 		}
 	}
+#endif 
 
 	_nextBlockQueue.pop_front();
 	_nextBlockQueue.pop_front();
