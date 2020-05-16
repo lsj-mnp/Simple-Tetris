@@ -4,7 +4,7 @@
 
 mnp::SimpleTetris::SimpleTetris(int32 width, int32 height) : IGraphicalWindow(width, height)
 {
-	__noop;
+	_bingoTimer.set(100, Timer::EUnit::Milli);
 }
 
 mnp::SimpleTetris::~SimpleTetris()
@@ -34,6 +34,7 @@ void mnp::SimpleTetris::set(const std::wstring& title, HINSTANCE hInstance, WNDP
 	createBlockFromImage(EBlockType::InvL, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/blue.png");
 	createBlockFromImage(EBlockType::Z, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/green.png");
 	createBlockFromImage(EBlockType::S, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/pink.png");
+	createBlockFromImage(EBlockType::Bingo, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/line.png");
 
 	createBackgroundFromImage(EBackground::Sea, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sea.png");
 	createBackgroundFromImage(EBackground::Sunset, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sunset.png");
@@ -264,6 +265,23 @@ void mnp::SimpleTetris::set(const std::wstring& title, HINSTANCE hInstance, WNDP
 	_board[6][0] = 1;*/
 }
 
+bool mnp::SimpleTetris::update()
+{
+	if (_bingoTimer.tick() == true)
+	{
+		while (_bingoLineIndices.size() > 0)
+		{
+			clearBingoLine(_bingoLineIndices.back());
+
+			_bingoLineIndices.pop_back();
+		}
+
+		_bingoTimer.stop();
+	}
+
+	return __super::update();
+}
+
 void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& borderColor, const Color& boardColor)
 {
 	//createImageFromFile()로 이미지 파일을 받아와서 보드나 판 이미지를 그릴 수 있다.
@@ -300,7 +318,7 @@ void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& border
 	drawRectangleToScreen(position, kBoardSizePixel, boardColor);
 
 	// 현재 블록
-	drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
+	setBlockToBoard(_currBlockType, _currPosition, _currDirection);
 
 	drawGrid(position);
 
@@ -330,7 +348,7 @@ void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& border
 	if (_currLevel <= 30)
 	{
 		//보드에 반투명 블록을 그리는 for문
-		drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
+		setBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 		bool shouldDraw{ false };
 		//max = 둘 중 큰 숫자를 가져오는 매크로임. 따라서 최소값을 지정하려면 max를 사용해야 함.(더 작은 숫자를 무시함.)
 		for (int i = max(_currPosition.y, 0); i < kBoardSize.y; ++i)
@@ -364,8 +382,6 @@ void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& border
 	{
 		__noop;
 	}
-
-	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, false);
 }
 
 void mnp::SimpleTetris::drawGrid(const mnp::Position2& startPosition)
@@ -385,7 +401,8 @@ void mnp::SimpleTetris::drawGrid(const mnp::Position2& startPosition)
 
 bool mnp::SimpleTetris::move(EDirection eDirection)
 {
-	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
+	//현재 블록을 지우기 위해 호출함.
+	setBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 
 	switch (eDirection)
 	{
@@ -414,9 +431,10 @@ bool mnp::SimpleTetris::move(EDirection eDirection)
 		}
 		else
 		{
-			drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
+			//지워진 현재 블록을 다시 그림.
+			setBlockToBoard(_currBlockType, _currPosition, _currDirection);
 
-			if (_currPosition.y < 0)
+			if (_currPosition.y < -1)
 			{
 				_isGameOver = true;
 			}
@@ -444,18 +462,31 @@ bool mnp::SimpleTetris::move(EDirection eDirection)
 	return false;
 }
 
-void mnp::SimpleTetris::rotate()
+void mnp::SimpleTetris::rotate(bool clockWise)
 {
-	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
+	setBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 
 	int32 currDirection{ int32(_currDirection) };
 
-	++currDirection;
-
-	if (currDirection == 4)
+	if (clockWise == true)
 	{
-		currDirection = 0;
+		++currDirection;
+
+		if (currDirection > 3)
+		{
+			currDirection = 0;
+		}
 	}
+	else
+	{
+		--currDirection;
+
+		if (currDirection < 0)
+		{
+			currDirection = 3;
+		}
+	}
+
 
 	EDirection nextDirection = EDirection(currDirection);
 	if (canDrawBlock(_currBlockType, _currPosition, nextDirection) == true)
@@ -524,7 +555,7 @@ const mnp::Position2& mnp::SimpleTetris::getCurrPosition() const
 
 void mnp::SimpleTetris::setCurrBlockType(EBlockType eBlockType)
 {
-	drawBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
+	setBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 
 	if (canDrawBlock(eBlockType, _currPosition, _currDirection) == true)
 	{
@@ -532,7 +563,7 @@ void mnp::SimpleTetris::setCurrBlockType(EBlockType eBlockType)
 	}
 	else
 	{
-		drawBlockToBoard(_currBlockType, _currPosition, _currDirection);
+		setBlockToBoard(_currBlockType, _currPosition, _currDirection);
 	}
 }
 
@@ -746,24 +777,36 @@ void mnp::SimpleTetris::checkBingo()
 		if (isBingo == true)
 		{
 			//memset(_board[currY], 0, (size_t)kBoardSize.x);
+			changeBingoLineColor(currY);
 
-			for (int32 y = currY - 1; y >= 0; --y)
-			{
-				memcpy(_board[y + 1], _board[y], (size_t)kBoardSize.x);
-			}
+			_bingoTimer.start();
 
-			++bingoCount;
+			_bingoLineIndices.emplace_back(currY);
 		}
-		else
-		{
-			--currY;
-		}
+		
+		--currY;
 	}
 
-	uint32 deltaScore{ (bingoCount * bingoCount) * 100 };
+	uint32 deltaScore{ ((uint32)_bingoLineIndices.size() * (uint32)_bingoLineIndices.size()) * 100 };
 
 	_currScore += deltaScore;
 	_currLevelScore += deltaScore;
+}
+
+void mnp::SimpleTetris::changeBingoLineColor(int32 currY)
+{
+	for (int32 x = 0; x < kBoardSize.x; ++x)
+	{
+		_board[currY][x] = (uint32)EBlockType::Bingo;
+	}
+}
+
+void mnp::SimpleTetris::clearBingoLine(int32 bingoY)
+{
+	for (int32 y = bingoY - 1; y > 0; --y)
+	{
+		memcpy(_board[y + 1], _board[y], (size_t)kBoardSize.x);
+	}
 }
 
 void mnp::SimpleTetris::createBlock(EBlockType eBlockType, const Color& color, uint8 alpha)
@@ -813,7 +856,7 @@ void mnp::SimpleTetris::drawBlockUnitToImage(EBlockType eBlockType, const Positi
 		Size2(kBlockBorder, kBlockSize.y - 1), Color::add(color, Color(60, 60, 60)), alpha);
 }
 
-void mnp::SimpleTetris::drawBlockToBoard(EBlockType eBlockType, const Position2& position, EDirection eDirection, bool bErase)
+void mnp::SimpleTetris::setBlockToBoard(EBlockType eBlockType, const Position2& position, EDirection eDirection, bool bErase)
 {
 	const int32 x{ int32(position.x) };
 	const int32 y{ int32(position.y) };

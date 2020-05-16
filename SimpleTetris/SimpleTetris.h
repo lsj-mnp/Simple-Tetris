@@ -4,6 +4,7 @@
 //#include <queue>
 #include <deque>
 #include "CommonTypes.h"
+#include "Timer.h"
 
 namespace mnp
 {
@@ -49,6 +50,7 @@ namespace mnp
 		InvL, //
 		Z, // 
 		S, // 
+		Bingo,
 		MAX
 	};
 
@@ -80,6 +82,7 @@ namespace mnp
 
 	public:
 		virtual void set(const std::wstring& title, HINSTANCE hInstance, WNDPROC windowProc) override;
+		virtual bool update() override;
 
 	public:
 		void drawBoard(const Position2& position, const Color& borderColor, const Color& boardColor);
@@ -87,7 +90,7 @@ namespace mnp
 
 	public:
 		bool move(EDirection eDirection);
-		void rotate();
+		void rotate(bool clockWise);
 
 	private:
 		const bool getRotatablePosition(EDirection eNextDirection, mnp::Position2& outPosition) const;
@@ -139,6 +142,8 @@ namespace mnp
 
 	private:
 		void checkBingo();
+		void changeBingoLineColor(int32 currY);
+		void clearBingoLine(int32 bingoY);
 
 	private:
 		void createBlock(EBlockType eBlockType, const Color& color, uint8 alpha = 255);
@@ -148,7 +153,7 @@ namespace mnp
 
 	private:
 		void drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha = 255);
-		void drawBlockToBoard(EBlockType eBlockType, const Position2& position, EDirection eDirection, bool bErase = false);
+		void setBlockToBoard(EBlockType eBlockType, const Position2& position, EDirection eDirection, bool bErase = false);
 		void drawBlockToScreen(EBlockType eBlockType, const Position2& position, EDirection eDirection);
 		
 	private:
@@ -172,9 +177,9 @@ namespace mnp
 	private:
 		uint32	_iiBlocks[(uint32)EBlockType::MAX]{};
 		uint32  _iiBackground[(uint32) EBackground::Max]{};
-		uint32  _iiBackground2{};
 		
 	private:
+		//_board의 한 항목은 EblockType의 한 항목을 담고있다.
 		uint8 _board[uint32(kBoardSize.y)][uint32(kBoardSize.x)]{};
 
 	private:
@@ -187,6 +192,12 @@ namespace mnp
 		Position2 _currPosition{};
 		EBlockType _currBlockType{ EBlockType::I };
 		EDirection _currDirection{ EDirection::N };
+
+	private:
+		std::deque<uint32> _bingoLineIndices{};
+
+	private:
+		Timer _bingoTimer{};
 
 	private:
 		std::deque<EBlockType> _nextBlockQueue{};

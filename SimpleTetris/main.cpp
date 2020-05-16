@@ -67,15 +67,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					}
 					if (GetAsyncKeyState(VK_UP) == SHORT(0x8001))
 					{
-						//g_simpleTetris.move(EDirection::N);
-						g_simpleTetris.rotate();
-					}
-					if (GetAsyncKeyState(VK_DOWN) == SHORT(0x8001))
-					{
-						g_simpleTetris.move(EDirection::S);
-					}
-					if (GetAsyncKeyState(VK_SPACE) == SHORT(0x8001))
-					{
 						g_simpleTetris.addCurrScore();
 						g_simpleTetris.addCurrLevelScore();
 
@@ -83,7 +74,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						{
 
 						}
-						//g_simpleTetris.rotate();
+					}
+					if (GetAsyncKeyState(VK_DOWN) == SHORT(0x8001))
+					{
+						g_simpleTetris.move(EDirection::S);
+					}
+				/*	if (GetAsyncKeyState(VK_SPACE) == SHORT(0x8001))
+					{
+						
+					}*/
+					if (GetAsyncKeyState('Z') == SHORT(0x8001))
+					{
+						g_simpleTetris.rotate(false);
+					}
+					if (GetAsyncKeyState('X') == SHORT(0x8001))
+					{
+						g_simpleTetris.rotate(true);
 					}
 				}
 

@@ -16,14 +16,46 @@ namespace mnp
 		_currUnit = unit;
 
 		_interval = interval;
+
+		start();
 	}
 
 	void Timer::start()
 	{
-		_startTime = std::chrono::steady_clock::now().time_since_epoch().count();
+		_isTicking = true;
+
+		reset();
 	}
 
-	bool Timer::tick() const
+	void Timer::stop()
+	{
+		_isTicking = false;
+	}
+
+	bool Timer::tick()
+	{
+		update();
+
+		if (_isTicking == true && _tickCount > 0)
+		{
+			reset();
+
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	void Timer::reset()
+	{
+		_startTime = std::chrono::steady_clock::now().time_since_epoch().count();
+
+		_tickCount = 0;
+	}
+
+	void Timer::update()
 	{
 		uint64 elapsed{ std::chrono::steady_clock::now().time_since_epoch().count() - _startTime };
 
@@ -47,14 +79,7 @@ namespace mnp
 
 		if (elapsed >= _interval)
 		{
-			return true;
+			++_tickCount;
 		}
-		
-		return false;
-	}
-
-	void Timer::reset()
-	{
-		start();
 	}
 }

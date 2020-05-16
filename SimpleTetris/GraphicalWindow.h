@@ -169,7 +169,7 @@ namespace mnp
 		uint32 createBlankImage(const Size2& size);
 
 	public:
-		bool update();
+		virtual bool update();
 
 	public:
 		void beginRendering(const Color& clearColor);
