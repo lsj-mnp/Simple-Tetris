@@ -434,14 +434,20 @@ bool mnp::SimpleTetris::move(EDirection eDirection)
 			//지워진 현재 블록을 다시 그림.
 			setBlockToBoard(_currBlockType, _currPosition, _currDirection);
 
-			if (_currPosition.y < -1)
+			if (_currPosition == getInitialBlockPosition())
 			{
 				_isGameOver = true;
 			}
 
+			// 새 블록 스폰
 			_currDirection = EDirection::N;
 			_currPosition = getInitialBlockPosition();
 			_currBlockType = _nextBlockQueue.front();
+
+			if (canDrawBlock(_currBlockType, _currPosition, _currDirection) == false)
+			{
+				_isGameOver = true;
+			}
 
 			_nextBlockQueue.pop_front();
 
@@ -741,6 +747,15 @@ void mnp::SimpleTetris::restartGame()
 	//float * float은 연산 오버플로우가 발생하므로 앞의 하나를 double로 캐스팅 한다.
 	memset(_board, 0, (size_t)((double)kBoardSize.x * kBoardSize.y));
 
+	for (int y = 0; y < 2; ++y)
+	{
+		for (int x = 0; x < kBoardSize.x; ++x)
+		{
+			if (x == 3) continue;
+			_board[(int32)kBoardSize.y - 1 - y][x] = (uint32)EBlockType::Used;
+		}
+	}
+
 	_nextBlockQueue.pop_front();
 	_nextBlockQueue.pop_front();
 	_nextBlockQueue.pop_front();
@@ -750,7 +765,7 @@ void mnp::SimpleTetris::restartGame()
 
 mnp::Position2 mnp::SimpleTetris::getInitialBlockPosition() const
 {
-	Position2 result{ (kBoardSize.x * 0.5) - (kBlockContainerSize * 0.5), -(kBlockContainerSize * 0.5) };
+	Position2 result{ (kBoardSize.x * 0.5) - (kBlockContainerSize * 0.5), 0};
 
 	return result;
 }
@@ -803,7 +818,7 @@ void mnp::SimpleTetris::changeBingoLineColor(int32 currY)
 
 void mnp::SimpleTetris::clearBingoLine(int32 bingoY)
 {
-	for (int32 y = bingoY - 1; y > 0; --y)
+	for (int32 y = bingoY - 1; y > -3; --y)
 	{
 		memcpy(_board[y + 1], _board[y], (size_t)kBoardSize.x);
 	}
@@ -870,7 +885,7 @@ void mnp::SimpleTetris::setBlockToBoard(EBlockType eBlockType, const Position2& 
 			const int32 finalY{ y + y_ };
 			const uint8 blockValue{ block.data[y_][x_] };
 			if (blockValue == 0) continue;
-			if (finalY < 0 || finalY >= (int32)kBoardSize.y) continue;
+			if (finalY < -kBlockContainerSize || finalY >= (int32)kBoardSize.y) continue;
 			if (finalX < 0 || finalX >= (int32)kBoardSize.x) continue;
 			_board[finalY][finalX] = blockType;
 		}

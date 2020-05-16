@@ -180,6 +180,8 @@ namespace mnp
 		
 	private:
 		//_board의 한 항목은 EblockType의 한 항목을 담고있다.
+		//의도적인 버퍼 오버런 발생.
+		uint8 _boardExtra[3][uint32(kBoardSize.x)]{};
 		uint8 _board[uint32(kBoardSize.y)][uint32(kBoardSize.x)]{};
 
 	private:

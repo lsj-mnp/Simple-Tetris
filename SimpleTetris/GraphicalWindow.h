@@ -27,6 +27,10 @@ namespace mnp
 		float x{};
 		float y{};
 
+		constexpr bool operator==(const Float2& b) const
+		{
+			return (x == b.x && y == b.y);
+		}
 		constexpr Float2 operator+() const
 		{
 			return Float2(+x, +y);
