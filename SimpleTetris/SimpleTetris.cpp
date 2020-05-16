@@ -440,9 +440,7 @@ bool mnp::SimpleTetris::move(EDirection eDirection)
 			}
 
 			// 새 블록 스폰
-			_currDirection = EDirection::N;
-			_currPosition = getInitialBlockPosition();
-			_currBlockType = _nextBlockQueue.front();
+			spawnNewBlock();
 
 			if (canDrawBlock(_currBlockType, _currPosition, _currDirection) == false)
 			{
@@ -580,9 +578,21 @@ mnp::EBlockType mnp::SimpleTetris::getCurrBlockType() const
 
 mnp::EBlockType mnp::SimpleTetris::getRandomBlockType() const
 {
-	int32 iBlockType{ (int32)(((double)rand() / (double)(RAND_MAX + 1)) * 7.0) + 2 };
+	int32 iBlockType{ getRandomBlockTypeInternal() };
+	
+	while (_prevRandomBlockType == iBlockType)
+	{
+		iBlockType = getRandomBlockTypeInternal();
+	}
+
+	_prevRandomBlockType = iBlockType;
 
 	return (EBlockType)iBlockType;
+}
+
+mnp::int32 mnp::SimpleTetris::getRandomBlockTypeInternal() const
+{
+	return (int32)(((double)rand() / (double)(RAND_MAX + 1)) * 7.0) + 2;
 }
 
 void mnp::SimpleTetris::updateNextblockQueue()
@@ -726,8 +736,7 @@ void mnp::SimpleTetris::restartGame()
 {
 	_isGameOver = false;
 
-	_currPosition = getInitialBlockPosition();
-	_currBlockType = getRandomBlockType();
+	spawnNewBlock();
 	_currLevel = 1;
 	_currScore = 0;
 	_currLevelScore = 0;
@@ -763,6 +772,42 @@ void mnp::SimpleTetris::restartGame()
 	_nextBlockQueue.pop_front();
 
 	_currScore = 0;
+}
+
+void mnp::SimpleTetris::spawnNewBlock()
+{
+	_currBlockType = _nextBlockQueue.front();
+	switch (_currBlockType)
+	{
+	case mnp::EBlockType::I:
+		_currDirection = EDirection::E;
+		break;
+	case mnp::EBlockType::T:
+		_currDirection = EDirection::N;
+		break;
+	case mnp::EBlockType::O:
+		_currDirection = EDirection::N;
+		break;
+	case mnp::EBlockType::L:
+		_currDirection = EDirection::E;
+		break;
+	case mnp::EBlockType::InvL:
+		_currDirection = EDirection::W;
+		break;
+	case mnp::EBlockType::Z:
+		_currDirection = EDirection::E;
+		break;
+	case mnp::EBlockType::S:
+		_currDirection = EDirection::W;
+		break;
+	case mnp::EBlockType::None:
+	case mnp::EBlockType::Used:
+	case mnp::EBlockType::Bingo:
+	case mnp::EBlockType::MAX:
+	default:
+		break;
+	}
+	_currPosition = getInitialBlockPosition();
 }
 
 mnp::Position2 mnp::SimpleTetris::getInitialBlockPosition() const

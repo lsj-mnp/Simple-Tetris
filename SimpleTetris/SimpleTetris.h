@@ -104,6 +104,7 @@ namespace mnp
 
 	private:
 		EBlockType getRandomBlockType() const;
+		int32 getRandomBlockTypeInternal() const;
 
 	public:
 		void updateNextblockQueue();
@@ -136,6 +137,7 @@ namespace mnp
 
 	public:
 		void restartGame();
+		void spawnNewBlock();
 
 	private:
 		Position2 getInitialBlockPosition() const;
@@ -210,6 +212,7 @@ namespace mnp
 		uint32 _currLevelScore{};
 		uint32 _scoreForNextLevel{ 500 };
 		uint32 _comboCount{};
+		mutable uint32 _prevRandomBlockType{};
 
 	private:
 		bool _isGameOver{ false };
