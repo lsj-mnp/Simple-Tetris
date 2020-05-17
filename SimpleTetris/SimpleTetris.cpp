@@ -27,20 +27,21 @@ void mnp::SimpleTetris::set(const std::wstring& title, HINSTANCE hInstance, WNDP
 	createBlock(EBlockType::Z,		Color( 40, 255,	 40));
 	createBlock(EBlockType::S,		Color(255, 127,	255));*/
 
-	createBlockFromImage(EBlockType::I, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/red.png");
-	createBlockFromImage(EBlockType::T, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/purple.png");
-	createBlockFromImage(EBlockType::O, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/yellow.png");
-	createBlockFromImage(EBlockType::L, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/skyblue.png");
-	createBlockFromImage(EBlockType::InvL, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/blue.png");
-	createBlockFromImage(EBlockType::Z, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/green.png");
-	createBlockFromImage(EBlockType::S, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/pink.png");
-	createBlockFromImage(EBlockType::Bingo, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/line.png");
+	createBlock(EBlockType::Used, Color(100, 100, 100));
+	createBlockFromImage(EBlockType::I,		L"../Asset/Blocks/skyblue.png");
+	createBlockFromImage(EBlockType::T,	    L"../Asset/Blocks/purple.png");
+	createBlockFromImage(EBlockType::O,	    L"../Asset/Blocks/yellow.png");
+	createBlockFromImage(EBlockType::L,		L"../Asset/Blocks/orange.png");
+	createBlockFromImage(EBlockType::InvL,  L"../Asset/Blocks/blue.png");
+	createBlockFromImage(EBlockType::Z,     L"../Asset/Blocks/red.png");
+	createBlockFromImage(EBlockType::S,     L"../Asset/Blocks/green.png");
+	createBlockFromImage(EBlockType::Bingo, L"../Asset/Blocks/line.png");
 
-	createBackgroundFromImage(EBackground::Sea, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sea.png");
-	createBackgroundFromImage(EBackground::Sunset, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sunset.png");
-	createBackgroundFromImage(EBackground::Space, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/space.png");
-	createBackgroundFromImage(EBackground::Sun, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/sun.png");
-	createBackgroundFromImage(EBackground::BlackHole, L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/blackhole.png");
+	createBackgroundFromImage(EBackground::Sea,       L"../Asset/sea.png");
+	createBackgroundFromImage(EBackground::Sunset,    L"../Asset/sunset.png");
+	createBackgroundFromImage(EBackground::Space,     L"../Asset/space.png");
+	createBackgroundFromImage(EBackground::Sun,       L"../Asset/sun.png");
+	createBackgroundFromImage(EBackground::BlackHole, L"../Asset/blackhole.png");
 
 	// I형 블록
 	{
@@ -660,7 +661,7 @@ void mnp::SimpleTetris::updateGameLevel()
 
 void mnp::SimpleTetris::increasingGameLevel()
 {
-	if (_currLevel <= 100)
+	if (_currLevel < 100)
 	{
 		_currLevel += 10;
 

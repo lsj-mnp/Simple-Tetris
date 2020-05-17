@@ -35,6 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	static constexpr Position2 boardPosition{ 10, 80 };
 	Color clearColor{ 240, 240, 255 };
 	Color normalFontColor{ kDefaultColor };
+	Color pauseColor{ 0, 0, 0 };
 	Color levelColor{ kDefaultColor };
 	
 	g_simpleTetris.restartGame();
@@ -91,35 +92,37 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					{
 						g_simpleTetris.rotate(true);
 					}
+
+#if defined DEBUG || _DEBUG
+					if (GetAsyncKeyState('W') == SHORT(0x8001))
+					{
+						auto timerInterval{ g_simpleTetris.getTimerInterval() };
+
+						g_simpleTetris.setTimerInterval(timerInterval - 50);
+					}
+
+					if (GetAsyncKeyState('Q') == SHORT(0x8001))
+					{
+						auto currBlockType = g_simpleTetris.getCurrBlockType();
+						uint32 iNextBlockType{ (uint32)currBlockType + 1 };
+						if (iNextBlockType >= (uint32)EBlockType::MAX)
+						{
+							iNextBlockType = 2;
+						}
+						g_simpleTetris.setCurrBlockType((EBlockType)iNextBlockType);
+					}
+					if (GetAsyncKeyState('L') == SHORT(0x8001))
+					{
+						g_simpleTetris.increasingGameLevel();
+					}
+#endif 
 				}
 
 				if (GetAsyncKeyState('P') == SHORT(0x8001))
 				{
 					g_simpleTetris.togglePause();
 				}
-#if defined DEBUG || _DEBUG
-				if (GetAsyncKeyState('W') == SHORT(0x8001))
-				{
-					auto timerInterval{ g_simpleTetris.getTimerInterval() };
 
-					g_simpleTetris.setTimerInterval(timerInterval - 50);
-				}
-
-				if (GetAsyncKeyState('Q') == SHORT(0x8001))
-				{
-					auto currBlockType = g_simpleTetris.getCurrBlockType();
-					uint32 iNextBlockType{ (uint32)currBlockType + 1 };
-					if (iNextBlockType >= (uint32)EBlockType::MAX)
-					{
-						iNextBlockType = 2;
-					}
-					g_simpleTetris.setCurrBlockType((EBlockType)iNextBlockType);
-				}
-				if (GetAsyncKeyState('L') == SHORT(0x8001))
-				{
-					g_simpleTetris.increasingGameLevel();
-				}
-#endif 
 				if (g_simpleTetris.getIsPaused() == true)
 				{
 					__noop;
@@ -137,7 +140,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		g_simpleTetris.beginRendering(clearColor);
 		{
-			g_simpleTetris.drawBoard(boardPosition, Color(0, 60, 100), Color(200, 200, 200));
+			g_simpleTetris.drawBoard(boardPosition, Color(0, 60, 100), Color(255, 255, 255));
 
 			g_simpleTetris.useFont(1);
 			g_simpleTetris.drawTextToScreen(Position2(0, 0), Size2(SimpleTetris::kBoardSizePixel.x + 20, boardPosition.y - 10), L"TETRIS", Color(200, 100, 100),
@@ -195,7 +198,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				g_simpleTetris.useFont(3);
 				g_simpleTetris.drawTextToScreen(Position2(0, 0), Size2(g_kWidth, g_kHeight), L"PAUSE"
-					, normalFontColor, EHorzAlign::Center, EVertAlign::Center);
+					, pauseColor, EHorzAlign::Center, EVertAlign::Center);
 			}
 		}
 		g_simpleTetris.endRendering();
