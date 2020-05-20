@@ -27,21 +27,28 @@ void mnp::SimpleTetris::set(const std::wstring& title, HINSTANCE hInstance, WNDP
 	createBlock(EBlockType::Z,		Color( 40, 255,	 40));
 	createBlock(EBlockType::S,		Color(255, 127,	255));*/
 
-	createBlock(EBlockType::Used, Color(100, 100, 100));
-	createBlockFromImage(EBlockType::I,		L"../Asset/Blocks/skyblue.png");
-	createBlockFromImage(EBlockType::T,	    L"../Asset/Blocks/purple.png");
-	createBlockFromImage(EBlockType::O,	    L"../Asset/Blocks/yellow.png");
-	createBlockFromImage(EBlockType::L,		L"../Asset/Blocks/orange.png");
-	createBlockFromImage(EBlockType::InvL,  L"../Asset/Blocks/blue.png");
-	createBlockFromImage(EBlockType::Z,     L"../Asset/Blocks/red.png");
-	createBlockFromImage(EBlockType::S,     L"../Asset/Blocks/green.png");
-	createBlockFromImage(EBlockType::Bingo, L"../Asset/Blocks/line.png");
+	// [작업 디렉터리 설정]
+	// '프로젝트 속성' - '디버깅' - '작업 디렉터리'
+	// 작업 디렉터리는 상대 경로의 기준이 됨.
+	// 예를 들어
+	// $(ProjectDir)인 경우, 프로젝트의 디렉터리가 상대 경로의 기준이 되고
+	// $(SolutionDir)인 경우, 솔루션의 디렉터리가 상대 경로의 기준이 된다.
 
-	createBackgroundFromImage(EBackground::Sea,       L"../Asset/sea.png");
-	createBackgroundFromImage(EBackground::Sunset,    L"../Asset/sunset.png");
-	createBackgroundFromImage(EBackground::Space,     L"../Asset/space.png");
-	createBackgroundFromImage(EBackground::Sun,       L"../Asset/sun.png");
-	createBackgroundFromImage(EBackground::BlackHole, L"../Asset/blackhole.png");
+	createBlock(EBlockType::Used, Color(100, 100, 100));
+	createBlockFromImage(EBlockType::I,	    L"Asset/Blocks/skyblue.png");
+	createBlockFromImage(EBlockType::T,	    L"Asset/Blocks/purple.png");
+	createBlockFromImage(EBlockType::O,	    L"Asset/Blocks/yellow.png");
+	createBlockFromImage(EBlockType::L,		L"Asset/Blocks/orange.png");
+	createBlockFromImage(EBlockType::InvL,  L"Asset/Blocks/blue.png");
+	createBlockFromImage(EBlockType::Z,     L"Asset/Blocks/red.png");
+	createBlockFromImage(EBlockType::S,     L"Asset/Blocks/green.png");
+	createBlockFromImage(EBlockType::Bingo, L"Asset/Blocks/line.png");
+
+	createBackgroundFromImage(EBackground::Sea,       L"Asset/sea.png");
+	createBackgroundFromImage(EBackground::Sunset,    L"Asset/sunset.png");
+	createBackgroundFromImage(EBackground::Space,     L"Asset/space.png");
+	createBackgroundFromImage(EBackground::Sun,       L"Asset/sun.png");
+	createBackgroundFromImage(EBackground::BlackHole, L"Asset/blackhole.png");
 
 	// I형 블록
 	{
@@ -884,6 +891,7 @@ void mnp::SimpleTetris::createBlockFromImage(EBlockType eBlockType, const std::w
 {
 	// === 버전 2
 	_iiBlocks[(uint32)eBlockType] = createImageFromFile(filename);
+
 	// ===
 }
 

@@ -4,7 +4,9 @@
 //ctrl + shift +t, alt + (달러표시) 해당 위치로 이동.
 /*
 todo
-블록 콤보 이펙트 추가
+블록 색상 오류수정
+소리 추가
+배경 이미지 변경 고려
 */
 
 static constexpr mnp::int32 g_kWidth{ 600 };

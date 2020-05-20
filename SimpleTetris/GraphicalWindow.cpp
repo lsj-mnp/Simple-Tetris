@@ -85,13 +85,27 @@ mnp::uint32 mnp::IGraphicalWindow::createImageFromFile(const std::wstring& fileN
 	WideCharToMultiByte(CP_ACP, 0, fileName.c_str(), static_cast<int>(fileName.size()), fileNameA, MAX_PATH, 0, FALSE);
 
 	int x{}, y{}, channelCount{};
-	auto pixels = stbi_load(fileNameA, &x, &y, &channelCount, 4);
+	const auto pixels = stbi_load(fileNameA, &x, &y, &channelCount, 4);
 	assert(pixels != nullptr);
 
-	HBITMAP bitmap{ CreateBitmap(x, y, 1, channelCount * 8, pixels) };
+	const uint32 pixelCount = x * y;
+	uint8* const pixels_bgra = new uint8[(uint64)pixelCount * channelCount]{};
+	for (uint32 iPixel = 0; iPixel < pixelCount; ++iPixel)
+	{
+		const uint64 iOffset = iPixel * 4;
+		pixels_bgra[iOffset + 0] = pixels[iOffset + 2]; // R => B
+		pixels_bgra[iOffset + 1] = pixels[iOffset + 1]; // G
+		pixels_bgra[iOffset + 2] = pixels[iOffset + 0]; // B => R
+		pixels_bgra[iOffset + 3] = pixels[iOffset + 3]; // A
+	}
+
+	// 채널 순서가 RGBA가 아니라 BGRA임에 주의할 것!!
+	HBITMAP bitmap{ CreateBitmap(x, y, 1, channelCount * 8, pixels_bgra) };
+
 	_vImages.emplace_back(bitmap, Size2(static_cast<float>(x), static_cast<float>(y)));
 
 	stbi_image_free(pixels);
+	delete[] pixels_bgra;
 
 	return static_cast<uint32>(_vImages.size() - 1);
 }
