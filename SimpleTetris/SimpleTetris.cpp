@@ -1,5 +1,10 @@
 ﻿#include "SimpleTetris.h"
 #include <thread>
+//assert는 release 빌드에서는 assert를 사용한 줄을 아예 실행이 되지 않음.
+//따라서 release 빌드에서 쓰려면 다른 논리를 사용해야 함.
+#include <cassert>
+
+//#pragma comment(lib, "Lib/fmodL_vc.lib")
 
 
 mnp::SimpleTetris::SimpleTetris(int32 width, int32 height) : IGraphicalWindow(width, height)
@@ -852,6 +857,11 @@ void mnp::SimpleTetris::checkBingo()
 			_bingoTimer.start();
 
 			_bingoLineIndices.emplace_back(currY);
+
+			if (_FmodSystem->playSound(_FmodSoundBingo, nullptr, false, &_FmodChannel) != FMOD_OK)
+			{
+				assert(false);
+			}
 		}
 		
 		--currY;
@@ -898,6 +908,51 @@ void mnp::SimpleTetris::createBlockFromImage(EBlockType eBlockType, const std::w
 void mnp::SimpleTetris::createBackgroundFromImage(EBackground eBackground, const std::wstring& filename)
 {
 	_iiBackground[(uint32)eBackground] = createImageFromFile(filename);
+}
+
+void mnp::SimpleTetris::createSound()
+{
+	//정적할당.
+	// 얼마만큼의 메모리 공간을 사용할지 미리 알고있을 경우 처음부터 어느정도의 크기의 메모리공간을 사용할지 정해줄 수 있음.
+	// 이 경우 어느 정도의 크기의 메모리 공간을 사용할지에 대한 정보는 exe 파일에 저장되고 실제 메모리 할당은 runtime에 함.
+
+	//동적할당 = new.
+	// 연산자 new는 내부적으로 사용할 '메모리 공간'의 '주소'를 리턴하는 함수를 호출한다.
+	// 따라서 동적할당을 하기 위해 필요한 자료형은 포인터여야 한다.
+	// 예) int* a = new int;
+
+	if (FMOD::System_Create(&_FmodSystem) != FMOD_OK)
+	{
+		MessageBox(_hWnd, L"ERROR: System Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
+	}
+
+	if (_FmodSystem->init(32, FMOD_INIT_NORMAL, nullptr) != FMOD_OK)
+	{
+		MessageBox(_hWnd, L"ERROR: System Initialize에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
+	}
+
+	if (_FmodSystem->createSound("Asset/Sound/pegasus.mp3"
+		, FMOD_LOOP_NORMAL, nullptr, &_FmodSoundBg) != FMOD_OK)
+	{
+		MessageBox(_hWnd, L"ERROR: Sound Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
+	}
+
+	if (_FmodSystem->createSound("Asset/Sound/laser_enemy.wav"
+		, FMOD_DEFAULT | FMOD_NONBLOCKING, nullptr, &_FmodSoundBingo) != FMOD_OK)
+	{
+		MessageBox(_hWnd, L"ERROR: Sound Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
+	}
+
+	if (_FmodSystem->playSound(_FmodSoundBg, nullptr, false, &_FmodChannel) != FMOD_OK)
+	{
+		MessageBox(_hWnd, L"ERROR: Sound Play에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
+	}
+}
+
+void mnp::SimpleTetris::releaseSound()
+{
+	_FmodSoundBg->release();
+	_FmodSystem->release();
 }
 
 //블록 하나를 이미지에 그리는 함수.

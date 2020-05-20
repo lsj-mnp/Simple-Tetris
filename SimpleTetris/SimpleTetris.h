@@ -3,6 +3,12 @@
 #include "GraphicalWindow.h"
 //#include <queue>
 #include <deque>
+//inlcude와 libraury의 경로는 따로 있음.
+//'프로젝트 속성' - 'VC++ 디렉터리' - '포함 디렉터리', '라이브러리 디렉터리'
+//포함 디렉터리에서 경로를 저장하면 꺽쇠괄호로 포함 가능. 상대경로로 하지 않아도 됨.
+//#include "../FMOD/fmod.hpp"
+//hpp: 그냥 헤더임. C++용 헤더라는 사실을 명시할 뿐임.
+#include <FMOD/fmod.hpp>
 #include "CommonTypes.h"
 #include "Timer.h"
 
@@ -153,6 +159,10 @@ namespace mnp
 
 		void createBackgroundFromImage(EBackground eBackground, const std::wstring& filename);
 
+	public:
+		void createSound();
+		void releaseSound();
+
 	private:
 		void drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha = 255);
 		void setBlockToBoard(EBlockType eBlockType, const Position2& position, EDirection eDirection, bool bErase = false);
@@ -218,5 +228,11 @@ namespace mnp
 		bool _isGameOver{ false };
 		mutable bool _isPaused{ false };
 		mutable bool _isLevelUped{ false };
+
+	private:
+		FMOD::System* _FmodSystem{};
+		FMOD::Sound* _FmodSoundBg{};
+		FMOD::Sound* _FmodSoundBingo{};
+		FMOD::Channel* _FmodChannel{};
 	};
 }

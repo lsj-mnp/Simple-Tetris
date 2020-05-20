@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{318c00bb-df5d-49a7-81cf-2456cb1c722d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -44,5 +47,13 @@
     <ClInclude Include="CommonTypes.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Lib\fmodL_vc.lib">
+      <Filter>Lib</Filter>
+    </Library>
+    <Library Include="..\Lib\fmod_vc.lib">
+      <Filter>Lib</Filter>
+    </Library>
   </ItemGroup>
 </Project>

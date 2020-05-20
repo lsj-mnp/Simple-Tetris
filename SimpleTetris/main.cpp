@@ -4,7 +4,6 @@
 //ctrl + shift +t, alt + (달러표시) 해당 위치로 이동.
 /*
 todo
-블록 색상 오류수정
 소리 추가
 배경 이미지 변경 고려
 */
@@ -40,6 +39,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Color pauseColor{ 0, 0, 0 };
 	Color levelColor{ kDefaultColor };
 	
+	g_simpleTetris.createSound();
+
 	g_simpleTetris.restartGame();
 
 	while (g_simpleTetris.update() == true)
