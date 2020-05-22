@@ -14,7 +14,7 @@ mnp::SimpleTetris::SimpleTetris(int32 width, int32 height) : IGraphicalWindow(wi
 
 mnp::SimpleTetris::~SimpleTetris()
 {
-	__noop;
+	releaseSound();
 }
 
 void mnp::SimpleTetris::set(const std::wstring& title, HINSTANCE hInstance, WNDPROC windowProc)
@@ -49,6 +49,7 @@ void mnp::SimpleTetris::set(const std::wstring& title, HINSTANCE hInstance, WNDP
 	createBlockFromImage(EBlockType::S,     L"Asset/Blocks/green.png");
 	createBlockFromImage(EBlockType::Bingo, L"Asset/Blocks/line.png");
 
+	createBackgroundFromImage(EBackground::Main,      L"Asset/main.png");
 	createBackgroundFromImage(EBackground::Sea,       L"Asset/sea.png");
 	createBackgroundFromImage(EBackground::Sunset,    L"Asset/sunset.png");
 	createBackgroundFromImage(EBackground::Space,     L"Asset/space.png");
@@ -303,97 +304,104 @@ void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& border
 	//drawImageToScreen(_iiBackground[(uint32)EBackground::Space], Position2(0,0));
 	//createImageFromFile(L"C:/Users/munop/OneDrive/문서/GitHub/Simple-Tetris/Simple-Tetris/Asset/testbackground.png");
 	
-	if (_currLevel <= 20)
+	if (_isGameStart == false)
 	{
-		drawImageToScreen(_iiBackground[(uint32)EBackground::Sea], Position2(0, 0));
-	}
-	else if(_currLevel >= 21 && _currLevel <= 40)
-	{
-		drawImageToScreen(_iiBackground[(uint32)EBackground::Sunset], Position2(0, 0));
-	}
-	else if(_currLevel >= 41 && _currLevel <= 60)
-	{
-		drawImageToScreen(_iiBackground[(uint32)EBackground::Space], Position2(0, 0));
-	}
-	else if (_currLevel >= 61 && _currLevel <= 80)
-	{
-		drawImageToScreen(_iiBackground[(uint32)EBackground::Sun], Position2(0, 0));
+		drawImageToScreen(_iiBackground[(uint32)EBackground::Main], Position2(0, 0));
 	}
 	else
 	{
-		drawImageToScreen(_iiBackground[(uint32)EBackground::BlackHole], Position2(0, 0));
-	}
-
-	// 판 테두리
-	drawRectangleToScreen(position - Position2(10, 10), kBoardSizePixel + Size2(20, 20), borderColor);
-
-	// 판
-	drawRectangleToScreen(position, kBoardSizePixel, boardColor);
-
-	// 현재 블록
-	setBlockToBoard(_currBlockType, _currPosition, _currDirection);
-
-	drawGrid(position);
-
-	Position2 nextBLockPosition{ position + Position2(kBoardSizePixel.x + 30, 10) };
-
-	//다음 블록 테두리
-	drawRectangleToScreen(nextBLockPosition, kBlockSize * Size2(5, 11), borderColor);
-
-	//다음 블록들
-	drawBlockToScreen(_nextBlockQueue[0], nextBLockPosition + kBlockSize, EDirection::N);
-	drawBlockToScreen(_nextBlockQueue[1], nextBLockPosition + Size2(kBlockSize.x, kBlockSize.y * 6), EDirection::N);
-
-	//보드에 블록을 그리는 for문
-	for (float y = 0; y < kBoardSize.y; y += 1)
-	{
-		for (float x = 0; x < kBoardSize.x; x += 1)
+		if (_currLevel <= 20)
 		{
-			uint8 block{ _board[uint32(y)][uint32(x)] };
+			drawImageToScreen(_iiBackground[(uint32)EBackground::Sea], Position2(0, 0));
+		}
+		else if (_currLevel >= 21 && _currLevel <= 40)
+		{
+			drawImageToScreen(_iiBackground[(uint32)EBackground::Sunset], Position2(0, 0));
+		}
+		else if (_currLevel >= 41 && _currLevel <= 60)
+		{
+			drawImageToScreen(_iiBackground[(uint32)EBackground::Space], Position2(0, 0));
+		}
+		else if (_currLevel >= 61 && _currLevel <= 80)
+		{
+			drawImageToScreen(_iiBackground[(uint32)EBackground::Sun], Position2(0, 0));
+		}
+		else
+		{
+			drawImageToScreen(_iiBackground[(uint32)EBackground::BlackHole], Position2(0, 0));
+		}
 
-			if (block != 0)
+		// 판 테두리
+		drawRectangleToScreen(position - Position2(10, 10), kBoardSizePixel + Size2(20, 20), borderColor);
+
+		// 판
+		drawRectangleToScreen(position, kBoardSizePixel, boardColor);
+
+		// 현재 블록
+		setBlockToBoard(_currBlockType, _currPosition, _currDirection);
+
+		drawGrid(position);
+
+		Position2 nextBLockPosition{ position + Position2(kBoardSizePixel.x + 30, 10) };
+
+		//다음 블록 테두리
+		drawRectangleToScreen(nextBLockPosition, kBlockSize * Size2(5, 11), borderColor);
+
+		//다음 블록들
+		drawBlockToScreen(_nextBlockQueue[0], nextBLockPosition + kBlockSize, EDirection::N);
+		drawBlockToScreen(_nextBlockQueue[1], nextBLockPosition + Size2(kBlockSize.x, kBlockSize.y * 6), EDirection::N);
+
+		//보드에 블록을 그리는 for문
+		for (float y = 0; y < kBoardSize.y; y += 1)
+		{
+			for (float x = 0; x < kBoardSize.x; x += 1)
 			{
-				drawImageToScreen(_iiBlocks[block], position + kBlockSize * Position2(x, y));
+				uint8 block{ _board[uint32(y)][uint32(x)] };
+
+				if (block != 0)
+				{
+					drawImageToScreen(_iiBlocks[block], position + kBlockSize * Position2(x, y));
+				}
 			}
 		}
-	}
 
-	if (_currLevel <= 30)
-	{
-		//보드에 반투명 블록을 그리는 for문
-		setBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
-		bool shouldDraw{ false };
-		//max = 둘 중 큰 숫자를 가져오는 매크로임. 따라서 최소값을 지정하려면 max를 사용해야 함.(더 작은 숫자를 무시함.)
-		for (int i = max(_currPosition.y, 0); i < kBoardSize.y; ++i)
+		if (_currLevel <= 30)
 		{
-			if (canDrawBlock(_currBlockType, Position2(_currPosition.x, i), _currDirection) == true)
+			//보드에 반투명 블록을 그리는 for문
+			setBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
+			bool shouldDraw{ false };
+			//max = 둘 중 큰 숫자를 가져오는 매크로임. 따라서 최소값을 지정하려면 max를 사용해야 함.(더 작은 숫자를 무시함.)
+			for (int i = max(_currPosition.y, 0); i < kBoardSize.y; ++i)
 			{
-				shouldDraw = true;
-			}
-			else
-			{
-				if (shouldDraw == true)
+				if (canDrawBlock(_currBlockType, Position2(_currPosition.x, i), _currDirection) == true)
 				{
-					uint32 iCurrBlockType{ (uint32)_currBlockType };
-					uint32 iCurrDirection{ (uint32)_currDirection };
-					for (int32 y = 0; y < kBlockContainerSize; ++y)
+					shouldDraw = true;
+				}
+				else
+				{
+					if (shouldDraw == true)
 					{
-						for (int32 x = 0; x < kBlockContainerSize; ++x)
+						uint32 iCurrBlockType{ (uint32)_currBlockType };
+						uint32 iCurrDirection{ (uint32)_currDirection };
+						for (int32 y = 0; y < kBlockContainerSize; ++y)
 						{
-							if (_blocks[iCurrBlockType][iCurrDirection].data[y][x] == 0) continue;
+							for (int32 x = 0; x < kBlockContainerSize; ++x)
+							{
+								if (_blocks[iCurrBlockType][iCurrDirection].data[y][x] == 0) continue;
 
-							drawImageAlphaToScreen(_iiBlocks[iCurrBlockType],
-								position + kBlockSize * Position2(_currPosition.x + x, i - 1 + y), (uint8)63);
+								drawImageAlphaToScreen(_iiBlocks[iCurrBlockType],
+									position + kBlockSize * Position2(_currPosition.x + x, i - 1 + y), (uint8)63);
+							}
 						}
 					}
+					break;
 				}
-				break;
 			}
 		}
-	}
-	else
-	{
-		__noop;
+		else
+		{
+			__noop;
+		}
 	}
 }
 
@@ -745,6 +753,16 @@ bool mnp::SimpleTetris::isGameOver() const
 	return _isGameOver;
 }
 
+bool mnp::SimpleTetris::isGameStart() const
+{
+	return _isGameStart;
+}
+
+void mnp::SimpleTetris::gameStart() 
+{
+	_isGameStart = true;
+}
+
 void mnp::SimpleTetris::restartGame()
 {
 	_isGameOver = false;
@@ -937,7 +955,13 @@ void mnp::SimpleTetris::createSound()
 		MessageBox(_hWnd, L"ERROR: Sound Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
 	}
 
-	if (_FmodSystem->createSound("Asset/Sound/laser_enemy.wav"
+	if (_FmodSystem->createSound("Asset/Sound/greate.mp3"
+		, FMOD_LOOP_NORMAL, nullptr, &_FmodSoundBg2) != FMOD_OK)
+	{
+		MessageBox(_hWnd, L"ERROR: Sound Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
+	}
+
+	if (_FmodSystem->createSound("Asset/Sound/bingo.mp3"
 		, FMOD_DEFAULT | FMOD_NONBLOCKING, nullptr, &_FmodSoundBingo) != FMOD_OK)
 	{
 		MessageBox(_hWnd, L"ERROR: Sound Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
@@ -951,7 +975,9 @@ void mnp::SimpleTetris::createSound()
 
 void mnp::SimpleTetris::releaseSound()
 {
+	_FmodSoundBingo->release();
 	_FmodSoundBg->release();
+	_FmodSoundBg2->release();
 	_FmodSystem->release();
 }
 

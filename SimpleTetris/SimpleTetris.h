@@ -63,6 +63,7 @@ namespace mnp
 	enum class EBackground
 	{
 		None,
+		Main,
 		Sea,
 		Sunset,
 		Space,
@@ -140,6 +141,10 @@ namespace mnp
 
 	public:
 		bool isGameOver() const;
+		bool isGameStart() const;
+
+	public:
+		void gameStart();
 
 	public:
 		void restartGame();
@@ -226,12 +231,14 @@ namespace mnp
 
 	private:
 		bool _isGameOver{ false };
+		bool _isGameStart{ false };
 		mutable bool _isPaused{ false };
 		mutable bool _isLevelUped{ false };
 
 	private:
 		FMOD::System* _FmodSystem{};
 		FMOD::Sound* _FmodSoundBg{};
+		FMOD::Sound* _FmodSoundBg2{};
 		FMOD::Sound* _FmodSoundBingo{};
 		FMOD::Channel* _FmodChannel{};
 	};
