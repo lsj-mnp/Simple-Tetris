@@ -8,7 +8,7 @@
 //포함 디렉터리에서 경로를 저장하면 꺽쇠괄호로 포함 가능. 상대경로로 하지 않아도 됨.
 //#include "../FMOD/fmod.hpp"
 //hpp: 그냥 헤더임. C++용 헤더라는 사실을 명시할 뿐임.
-#include <FMOD/fmod.hpp>
+#include "Audio.h"
 #include "CommonTypes.h"
 #include "Timer.h"
 
@@ -166,7 +166,6 @@ namespace mnp
 
 	public:
 		void createSound();
-		void releaseSound();
 
 	private:
 		void drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha = 255);
@@ -232,14 +231,11 @@ namespace mnp
 	private:
 		bool _isGameOver{ false };
 		bool _isGameStart{ false };
+		bool _isBgmChange{ true };
 		mutable bool _isPaused{ false };
 		mutable bool _isLevelUped{ false };
 
 	private:
-		FMOD::System* _FmodSystem{};
-		FMOD::Sound* _FmodSoundBg{};
-		FMOD::Sound* _FmodSoundBg2{};
-		FMOD::Sound* _FmodSoundBingo{};
-		FMOD::Channel* _FmodChannel{};
+		Audio _tetrisSound{};
 	};
 }

@@ -213,7 +213,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				g_simpleTetris.useFont(3);
 				g_simpleTetris.drawTextToScreen(Position2(0, 0), Size2(g_kWidth, g_kHeight), L"GAME OVER"
-					, normalFontColor, EHorzAlign::Center, EVertAlign::Center);
+					, normalFontColor - Color(0, 255, 255), EHorzAlign::Center, EVertAlign::Center);
 				if (GetAsyncKeyState('R') == SHORT(0x8001))
 				{
 					g_simpleTetris.restartGame();

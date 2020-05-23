@@ -14,7 +14,6 @@ mnp::SimpleTetris::SimpleTetris(int32 width, int32 height) : IGraphicalWindow(wi
 
 mnp::SimpleTetris::~SimpleTetris()
 {
-	releaseSound();
 }
 
 void mnp::SimpleTetris::set(const std::wstring& title, HINSTANCE hInstance, WNDPROC windowProc)
@@ -365,10 +364,11 @@ void mnp::SimpleTetris::drawBoard(const Position2& position, const Color& border
 			}
 		}
 
+		setBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
+		
 		if (_currLevel <= 30)
 		{
 			//보드에 반투명 블록을 그리는 for문
-			setBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 			bool shouldDraw{ false };
 			//max = 둘 중 큰 숫자를 가져오는 매크로임. 따라서 최소값을 지정하려면 max를 사용해야 함.(더 작은 숫자를 무시함.)
 			for (int i = max(_currPosition.y, 0); i < kBoardSize.y; ++i)
@@ -677,6 +677,18 @@ void mnp::SimpleTetris::updateGameLevel()
 			_gameSpeed -= 40;
 		}
 	}
+
+	if (_currLevel >= 30)
+	{
+		if (_isBgmChange == true)
+		{
+			_tetrisSound.soundStop("배경");
+
+			_tetrisSound.soundPlay("배경2");
+
+			_isBgmChange = false;
+		}
+	}
 }
 
 void mnp::SimpleTetris::increasingGameLevel()
@@ -876,10 +888,7 @@ void mnp::SimpleTetris::checkBingo()
 
 			_bingoLineIndices.emplace_back(currY);
 
-			if (_FmodSystem->playSound(_FmodSoundBingo, nullptr, false, &_FmodChannel) != FMOD_OK)
-			{
-				assert(false);
-			}
+			_tetrisSound.soundPlay("빙고");
 		}
 		
 		--currY;
@@ -939,46 +948,11 @@ void mnp::SimpleTetris::createSound()
 	// 따라서 동적할당을 하기 위해 필요한 자료형은 포인터여야 한다.
 	// 예) int* a = new int;
 
-	if (FMOD::System_Create(&_FmodSystem) != FMOD_OK)
-	{
-		MessageBox(_hWnd, L"ERROR: System Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
-	}
+	_tetrisSound.soundCreate("Asset/Sound/pegasus.mp3", FMOD_LOOP_NORMAL, "배경");
+	_tetrisSound.soundCreate("Asset/Sound/great.mp3", FMOD_LOOP_NORMAL, "배경2");
+	_tetrisSound.soundCreate("Asset/Sound/bingo.mp3", FMOD_DEFAULT | FMOD_NONBLOCKING, "빙고");
 
-	if (_FmodSystem->init(32, FMOD_INIT_NORMAL, nullptr) != FMOD_OK)
-	{
-		MessageBox(_hWnd, L"ERROR: System Initialize에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
-	}
-
-	if (_FmodSystem->createSound("Asset/Sound/pegasus.mp3"
-		, FMOD_LOOP_NORMAL, nullptr, &_FmodSoundBg) != FMOD_OK)
-	{
-		MessageBox(_hWnd, L"ERROR: Sound Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
-	}
-
-	if (_FmodSystem->createSound("Asset/Sound/greate.mp3"
-		, FMOD_LOOP_NORMAL, nullptr, &_FmodSoundBg2) != FMOD_OK)
-	{
-		MessageBox(_hWnd, L"ERROR: Sound Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
-	}
-
-	if (_FmodSystem->createSound("Asset/Sound/bingo.mp3"
-		, FMOD_DEFAULT | FMOD_NONBLOCKING, nullptr, &_FmodSoundBingo) != FMOD_OK)
-	{
-		MessageBox(_hWnd, L"ERROR: Sound Create에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
-	}
-
-	if (_FmodSystem->playSound(_FmodSoundBg, nullptr, false, &_FmodChannel) != FMOD_OK)
-	{
-		MessageBox(_hWnd, L"ERROR: Sound Play에 실패했습니다.", L"ERROR MESSAGE", MB_ICONERROR);
-	}
-}
-
-void mnp::SimpleTetris::releaseSound()
-{
-	_FmodSoundBingo->release();
-	_FmodSoundBg->release();
-	_FmodSoundBg2->release();
-	_FmodSystem->release();
+	_tetrisSound.soundPlay("배경");
 }
 
 //블록 하나를 이미지에 그리는 함수.

@@ -142,12 +142,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="GraphicalWindow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SimpleTetris.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Audio.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="GraphicalWindow.h" />
     <ClInclude Include="SimpleTetris.h" />
