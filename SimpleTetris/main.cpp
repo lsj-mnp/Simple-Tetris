@@ -8,7 +8,7 @@ todo
 */
 
 static constexpr mnp::int32 g_kWidth{ 600 };
-static constexpr mnp::int32 g_kHeight{ 1000 };
+static constexpr mnp::int32 g_kHeight{ 800 };
 static mnp::SimpleTetris g_simpleTetris{ g_kWidth, g_kHeight };
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)

@@ -38,9 +38,19 @@ void mnp::IGraphicalWindow::createInternal(const std::wstring& title, HINSTANCE 
 
 	// 윈도우를 생성한다
 	RECT windowRect{ 0, 0, 800, 600 };
-	_hWnd = CreateWindowExW(0, windowClass.lpszClassName, windowClass.lpszClassName, WS_OVERLAPPED,
+
+	auto windowStyle{ WS_CAPTION };
+	_hWnd = CreateWindowExW(0, windowClass.lpszClassName, windowClass.lpszClassName, windowStyle,
 		CW_USEDEFAULT, CW_USEDEFAULT, g_kWidth, g_kHeight,
 		nullptr, nullptr, hInstance, nullptr);
+
+	GetWindowRect(_hWnd, &windowRect);
+
+	//1번인수: 윈도우 전체의 크기. 2번인수: 윈도우 스타일을 확인해서 그만큼 빼주기 위해 받음.
+	AdjustWindowRect(&windowRect, windowStyle, FALSE);
+	
+	MoveWindow(_hWnd, windowRect.left, windowRect.top, windowRect.right - windowRect.left
+		, windowRect.bottom - windowRect.top, TRUE);
 
 	// 윈도우를 보여준다.
 	ShowWindow(_hWnd, SW_SHOWDEFAULT);
