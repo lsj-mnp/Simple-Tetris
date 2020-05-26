@@ -44,6 +44,7 @@ void mnp::IGraphicalWindow::createInternal(const std::wstring& title, HINSTANCE 
 		CW_USEDEFAULT, CW_USEDEFAULT, g_kWidth, g_kHeight,
 		nullptr, nullptr, hInstance, nullptr);
 
+	//윈도우의 크기를 받아오는 함수
 	GetWindowRect(_hWnd, &windowRect);
 
 	//1번인수: 윈도우 전체의 크기. 2번인수: 윈도우 스타일을 확인해서 그만큼 빼주기 위해 받음.

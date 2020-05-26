@@ -166,6 +166,7 @@ namespace mnp
 
 	public:
 		void createSound();
+		void playFastDownSound();
 
 	private:
 		void drawBlockUnitToImage(EBlockType eBlockType, const Position2& position, const Color& color, uint8 alpha = 255);

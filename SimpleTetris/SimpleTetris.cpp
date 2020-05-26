@@ -491,6 +491,8 @@ void mnp::SimpleTetris::rotate(bool clockWise)
 {
 	setBlockToBoard(_currBlockType, _currPosition, _currDirection, true);
 
+	_tetrisSound.soundPlay("뿅");
+
 	int32 currDirection{ int32(_currDirection) };
 
 	if (clockWise == true)
@@ -951,8 +953,15 @@ void mnp::SimpleTetris::createSound()
 	_tetrisSound.soundCreate("Asset/Sound/pegasus.mp3", FMOD_LOOP_NORMAL, "배경");
 	_tetrisSound.soundCreate("Asset/Sound/great.mp3", FMOD_LOOP_NORMAL, "배경2");
 	_tetrisSound.soundCreate("Asset/Sound/bingo.mp3", FMOD_DEFAULT | FMOD_NONBLOCKING, "빙고");
+	_tetrisSound.soundCreate("Asset/Sound/pyong.mp3", FMOD_DEFAULT | FMOD_NONBLOCKING, "뿅");
+	_tetrisSound.soundCreate("Asset/Sound/whip.mp3", FMOD_DEFAULT | FMOD_NONBLOCKING, "휩");
 
 	_tetrisSound.soundPlay("배경");
+}
+
+void mnp::SimpleTetris::playFastDownSound()
+{
+	_tetrisSound.soundPlay("휩");
 }
 
 //블록 하나를 이미지에 그리는 함수.

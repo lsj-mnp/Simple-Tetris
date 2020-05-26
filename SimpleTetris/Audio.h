@@ -22,7 +22,7 @@ public:
 	void soundStop(const std::string& soundkey);
 
 private:
-	FMOD::System*				_FmodSystem{};
+	FMOD::System*				 _FmodSystem{};
 
 private:
 	std::vector<FMOD::Sound*>    _vSounds{};
